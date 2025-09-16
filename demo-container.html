@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>芝生药局 - 演示预览容器</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background: linear-gradient(135deg, #4a9b4e 0%, #2d5f30 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            overflow-x: auto;
+        }
+
+        /* 顶部控制栏 */
+        .control-bar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .control-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .control-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .material-symbols-outlined {
+            vertical-align: middle;
+        }
+
+        .device-selector {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .device-btn {
+            padding: 8px 16px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .device-btn.active {
+            background: #4a9b4e;
+            color: white;
+            border-color: #4a9b4e;
+        }
+
+        /* 页面选择器 */
+        .page-selector {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .page-group {
+            display: flex;
+            gap: 8px;
+            padding: 8px;
+            background: #f5f5f5;
+            border-radius: 8px;
+        }
+
+        .page-group-title {
+            font-size: 12px;
+            color: #666;
+            padding: 5px 10px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+
+        .page-btn {
+            padding: 6px 12px;
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .page-btn:hover {
+            background: #f0f0f0;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .page-btn.active {
+            background: #4a9b4e;
+            color: white;
+            border-color: #4a9b4e;
+        }
+
+        /* 手机容器 */
+        .phone-container {
+            position: relative;
+            background: #1a1a1a;
+            border-radius: 40px;
+            padding: 10px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            transform: scale(1);
+            transform-origin: center top;
+        }
+
+        /* iPhone 19.5:9 比例 - 使用更大尺寸避免内容压缩 */
+        .phone-frame {
+            width: 430px;
+            height: 932px;
+            background: #000;
+            border-radius: 30px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* 手机顶部刘海 - 隐藏 */
+        .phone-notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 30px;
+            background: #000;
+            border-radius: 0 0 20px 20px;
+            z-index: 10;
+            display: none;  /* 隐藏刘海 */
+        }
+
+        /* 状态栏 - 移除或透明化 */
+        .status-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 44px;
+            background: transparent;  /* 改为透明，不遮挡内容 */
+            z-index: 9;
+            display: none;  /* 直接隐藏状态栏 */
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            font-size: 14px;
+            color: #000;
+        }
+
+        .status-time {
+            font-weight: 600;
+        }
+
+        .status-icons {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+        }
+
+        .status-icon {
+            width: 16px;
+            height: 16px;
+            background: #000;
+            mask-size: contain;
+            -webkit-mask-size: contain;
+        }
+
+        .signal-icon {
+            mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><rect x="3" y="7" width="4" height="10"/><rect x="10" y="5" width="4" height="12"/><rect x="17" y="3" width="4" height="14"/></svg>');
+            -webkit-mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><rect x="3" y="7" width="4" height="10"/><rect x="10" y="5" width="4" height="12"/><rect x="17" y="3" width="4" height="14"/></svg>');
+        }
+
+        .wifi-icon {
+            mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.65-4.35-1.65-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg>');
+            -webkit-mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.65-4.35-1.65-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg>');
+        }
+
+        .battery-icon {
+            mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><rect x="2" y="7" width="18" height="10" fill="none" stroke="black" stroke-width="2"/><rect x="20" y="10" width="2" height="4"/><rect x="4" y="9" width="12" height="6"/></svg>');
+            -webkit-mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><rect x="2" y="7" width="18" height="10" fill="none" stroke="black" stroke-width="2"/><rect x="20" y="10" width="2" height="4"/><rect x="4" y="9" width="12" height="6"/></svg>');
+        }
+
+        /* iframe 容器 */
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            background: white;
+            position: relative;
+        }
+
+        .phone-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            transform-origin: top left;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        /* 底部home指示器 */
+        .home-indicator {
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 134px;
+            height: 5px;
+            background: #000;
+            border-radius: 100px;
+            z-index: 10;
+        }
+
+        /* 加载动画 */
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 14px;
+            color: #666;
+        }
+
+        /* 设备信息 */
+        .device-info {
+            margin-top: 20px;
+            text-align: center;
+            color: white;
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* 缩放控制按钮 */
+        .scale-controls {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .scale-btn {
+            width: 30px;
+            height: 30px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .scale-btn:hover {
+            background: #4a9b4e;
+            color: white;
+            border-color: #4a9b4e;
+        }
+
+        .scale-value {
+            font-size: 14px;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        /* 响应式设计 - 调整为更合理的缩放而非改变尺寸 */
+        @media (max-width: 1400px) {
+            .phone-container {
+                transform: scale(0.9);
+            }
+        }
+
+        @media (max-width: 1200px) {
+            .phone-container {
+                transform: scale(0.8);
+            }
+        }
+
+        @media (max-width: 1000px) {
+            .phone-container {
+                transform: scale(0.7);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .phone-container {
+                transform: scale(0.6);
+            }
+
+            .control-bar {
+                padding: 10px 15px;
+            }
+
+            .page-btn {
+                font-size: 12px;
+                padding: 5px 10px;
+            }
+        }
+
+        @media (max-width: 580px) {
+            .phone-container {
+                transform: scale(0.5);
+            }
+
+            .control-title {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部控制栏 -->
+    <div class="control-bar">
+        <div class="control-header">
+            <div class="control-title">
+                <span class="material-symbols-outlined">smartphone</span>
+                芝生药局 - 移动端演示预览
+            </div>
+            <div class="device-selector">
+                <button class="device-btn active" onclick="setDevice('iphone')">iPhone</button>
+                <button class="device-btn" onclick="setDevice('android')">Android</button>
+            </div>
+        </div>
+
+        <!-- 页面选择器 -->
+        <div class="page-selector">
+            <!-- 主要页面 -->
+            <div class="page-group">
+                <div class="page-group-title">主要页面</div>
+                <button class="page-btn active" onclick="loadPage('zhisheng-pharmacy-prototype.html')">首页</button>
+                <button class="page-btn" onclick="loadPage('login-page.html')">登录</button>
+                <button class="page-btn" onclick="loadPage('product-detail-page.html')">商品详情</button>
+                <button class="page-btn" onclick="loadPage('checkout-page.html')">结算</button>
+                <button class="page-btn" onclick="loadPage('orders-page.html')">订单</button>
+            </div>
+
+            <!-- 用户中心 -->
+            <div class="page-group">
+                <div class="page-group-title">用户中心</div>
+                <button class="page-btn" onclick="loadPage('coupon-page.html')">优惠券</button>
+                <button class="page-btn" onclick="loadPage('points-page.html')">积分</button>
+                <button class="page-btn" onclick="loadPage('member-level-page.html')">会员等级</button>
+                <button class="page-btn" onclick="loadPage('address-manage-page.html')">地址管理</button>
+                <button class="page-btn" onclick="loadPage('message-center-page.html')">消息中心</button>
+            </div>
+
+            <!-- 其他页面 -->
+            <div class="page-group">
+                <div class="page-group-title">其他页面</div>
+                <button class="page-btn" onclick="loadPage('payment-qrcode-page.html')">支付</button>
+                <button class="page-btn" onclick="loadPage('questionnaire-page.html')">问卷</button>
+                <button class="page-btn" onclick="loadPage('upload-id-page.html')">证件上传</button>
+                <button class="page-btn" onclick="loadPage('company-info-page.html')">关于我们</button>
+                <button class="page-btn" onclick="loadPage('news-list-page.html')">资讯</button>
+                <button class="page-btn" onclick="loadPage('disclaimer-page.html')">免责声明</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 手机容器 -->
+    <div class="phone-container">
+        <div class="phone-frame">
+            <!-- 手机刘海 -->
+            <div class="phone-notch"></div>
+
+            <!-- 状态栏 -->
+            <div class="status-bar">
+                <div class="status-time" id="statusTime">9:41</div>
+                <div class="status-icons">
+                    <div class="status-icon signal-icon"></div>
+                    <div class="status-icon wifi-icon"></div>
+                    <div class="status-icon battery-icon"></div>
+                </div>
+            </div>
+
+            <!-- 页面内容 -->
+            <div class="phone-screen">
+                <iframe id="phoneFrame" class="phone-iframe" src="zhisheng-pharmacy-prototype.html"></iframe>
+            </div>
+
+            <!-- Home 指示器 -->
+            <div class="home-indicator"></div>
+        </div>
+    </div>
+
+    <!-- 设备信息 -->
+    <div class="device-info">
+        <span id="deviceInfo">iPhone 14 Pro Max (430 x 932) - 19.5:9</span>
+    </div>
+
+    <!-- 缩放控制 -->
+    <div class="scale-controls">
+        <button class="scale-btn" onclick="adjustScale(-0.1)">-</button>
+        <span class="scale-value" id="scaleValue">100%</span>
+        <button class="scale-btn" onclick="adjustScale(0.1)">+</button>
+        <button class="scale-btn" onclick="resetScale()">⟲</button>
+    </div>
+
+    <script>
+        // 当前设备类型和缩放比例
+        let currentDevice = 'iphone';
+        let currentPage = 'zhisheng-pharmacy-prototype.html';
+        let currentScale = 1;
+
+        // 调整缩放
+        function adjustScale(delta) {
+            currentScale = Math.min(Math.max(currentScale + delta, 0.5), 1.5);
+            updateScale();
+        }
+
+        // 重置缩放
+        function resetScale() {
+            currentScale = 1;
+            updateScale();
+        }
+
+        // 更新缩放
+        function updateScale() {
+            const container = document.querySelector('.phone-container');
+            container.style.transform = `scale(${currentScale})`;
+            document.getElementById('scaleValue').textContent = `${Math.round(currentScale * 100)}%`;
+
+            // 根据缩放调整容器高度避免截断
+            if (currentScale < 1) {
+                container.style.marginBottom = `${(1 - currentScale) * -400}px`;
+            } else {
+                container.style.marginBottom = '0';
+            }
+        }
+
+        // 检测屏幕尺寸自动调整初始缩放
+        function autoScale() {
+            const width = window.innerWidth;
+            if (width < 580) {
+                currentScale = 0.5;
+            } else if (width < 768) {
+                currentScale = 0.6;
+            } else if (width < 1000) {
+                currentScale = 0.7;
+            } else if (width < 1200) {
+                currentScale = 0.8;
+            } else if (width < 1400) {
+                currentScale = 0.9;
+            } else {
+                currentScale = 1;
+            }
+            updateScale();
+        }
+
+        // 初始化自动缩放
+        autoScale();
+        window.addEventListener('resize', autoScale);
+
+        // 更新时间
+        function updateTime() {
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            document.getElementById('statusTime').textContent = `${hours}:${minutes}`;
+        }
+
+        // 初始化时间并每分钟更新
+        updateTime();
+        setInterval(updateTime, 60000);
+
+        // 加载页面
+        function loadPage(page) {
+            currentPage = page;
+            const iframe = document.getElementById('phoneFrame');
+
+            // 移除所有按钮的active类
+            document.querySelectorAll('.page-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // 给当前按钮添加active类
+            event.target.classList.add('active');
+
+            // 显示加载动画
+            iframe.style.opacity = '0.5';
+
+            // 加载新页面
+            setTimeout(() => {
+                iframe.src = page;
+                iframe.onload = () => {
+                    iframe.style.opacity = '1';
+                };
+            }, 200);
+        }
+
+        // 切换设备
+        function setDevice(device) {
+            currentDevice = device;
+
+            // 更新按钮状态
+            document.querySelectorAll('.device-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // 更新设备信息
+            const phoneFrame = document.querySelector('.phone-frame');
+            const deviceInfo = document.getElementById('deviceInfo');
+
+            if (device === 'android') {
+                phoneFrame.style.borderRadius = '20px';
+                document.querySelector('.home-indicator').style.display = 'none';
+                deviceInfo.textContent = 'Android (430 x 932) - 19.5:9';
+            } else {
+                phoneFrame.style.borderRadius = '30px';
+                document.querySelector('.home-indicator').style.display = 'block';
+                deviceInfo.textContent = 'iPhone 14 Pro Max (430 x 932) - 19.5:9';
+            }
+        }
+
+        // 监听iframe内的导航
+        window.addEventListener('message', function(e) {
+            if (e.data && e.data.type === 'navigation') {
+                console.log('Navigation to:', e.data.page);
+            }
+        });
+
+        // 处理iframe加载错误
+        document.getElementById('phoneFrame').onerror = function() {
+            this.src = 'zhisheng-pharmacy-prototype.html';
+        };
+
+        // 键盘快捷键支持
+        document.addEventListener('keydown', function(e) {
+            // 按数字键快速切换页面
+            const pages = [
+                'zhisheng-pharmacy-prototype.html',
+                'login-page.html',
+                'product-detail-page.html',
+                'checkout-page.html',
+                'orders-page.html'
+            ];
+
+            if (e.key >= '1' && e.key <= '5') {
+                const index = parseInt(e.key) - 1;
+                const pageBtns = document.querySelectorAll('.page-btn');
+                if (pageBtns[index]) {
+                    pageBtns[index].click();
+                }
+            }
+        });
+    </script>
+</body>
+</html>

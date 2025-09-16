@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>订单结算 - 芝生药局</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background-color: #f8faf8;
+            color: #333;
+            padding-bottom: 80px;
+        }
+
+        /* 顶部导航 */
+        .top-nav {
+            background: white;
+            padding: 12px 15px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .back-btn {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            margin-right: 15px;
+        }
+
+        .page-title {
+            flex: 1;
+            text-align: center;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        /* 区块样式 */
+        .section {
+            background: white;
+            margin-bottom: 10px;
+            padding: 15px;
+        }
+
+        .section-title {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* 收货地址 */
+        .address-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .address-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 12px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .address-card.selected {
+            border-color: #4a9b4e;
+            background: #f8fff9;
+        }
+
+        .address-card.selected::before {
+            content: '✓';
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 18px;
+            height: 18px;
+            background: #4a9b4e;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .address-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .address-name {
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .address-phone {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .address-detail {
+            color: #666;
+            font-size: 13px;
+            line-height: 1.5;
+            padding-right: 30px;
+        }
+
+        .address-default {
+            background: #4a9b4e;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            margin-top: 8px;
+            display: inline-block;
+        }
+
+        .other-address-btn {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            color: #4a9b4e;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .other-address-btn span {
+            flex: 1;
+            margin-left: 8px;
+            font-size: 14px;
+        }
+
+        /* 优惠券选择 */
+        .coupon-selector {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .coupon-info {
+            flex: 1;
+        }
+
+        .coupon-text {
+            font-size: 14px;
+            color: #333;
+            margin-right: 10px;
+        }
+
+        .selected-coupon {
+            color: #999;
+            font-size: 13px;
+        }
+
+        /* 积分抵扣 */
+        .points-section {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .points-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .points-label {
+            font-size: 14px;
+            color: #333;
+        }
+
+        .toggle-switch {
+            width: 40px;
+            height: 22px;
+            background: #e0e0e0;
+            border-radius: 11px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .toggle-switch.active {
+            background: #4a9b4e;
+        }
+
+        .toggle-slider {
+            width: 18px;
+            height: 18px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: all 0.3s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .toggle-switch.active .toggle-slider {
+            left: 20px;
+        }
+
+        .points-input-area {
+            padding: 12px;
+            background: #f8fff9;
+            border-radius: 8px;
+        }
+
+        .points-available {
+            font-size: 13px;
+            color: #4a9b4e;
+            margin-bottom: 8px;
+        }
+
+        .points-input {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .points-input input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .use-all-points {
+            padding: 8px 12px;
+            background: #4a9b4e;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .points-tip {
+            font-size: 12px;
+            color: #999;
+        }
+
+        /* 配送方式 */
+        .delivery-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .delivery-option {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .delivery-option:hover {
+            border-color: #4a9b4e;
+        }
+
+        .delivery-option.selected {
+            border-color: #4a9b4e;
+            background: #f8fff9;
+        }
+
+        .radio-circle {
+            width: 18px;
+            height: 18px;
+            border: 2px solid #ddd;
+            border-radius: 50%;
+            margin-right: 12px;
+            position: relative;
+        }
+
+        .delivery-option.selected .radio-circle {
+            border-color: #4a9b4e;
+        }
+
+        .delivery-option.selected .radio-circle::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 8px;
+            height: 8px;
+            background: #4a9b4e;
+            border-radius: 50%;
+        }
+
+        .delivery-info {
+            flex: 1;
+        }
+
+        .delivery-name {
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .delivery-desc {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .delivery-price {
+            color: #ff5722;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .id-upload-notice {
+            background: #fff3e0;
+            padding: 8px 12px;
+            border-radius: 4px;
+            margin-top: 8px;
+            font-size: 12px;
+            color: #ff9800;
+            display: none;
+        }
+
+        .id-upload-notice.show {
+            display: block;
+        }
+
+        /* 支付方式 */
+        .payment-options {
+            display: flex;
+            gap: 15px;
+        }
+
+        .payment-option {
+            flex: 1;
+            padding: 15px 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .payment-option:hover {
+            border-color: #4a9b4e;
+        }
+
+        .payment-option.selected {
+            border-color: #4a9b4e;
+            background: #f8fff9;
+        }
+
+        .payment-icon {
+            width: 36px;
+            height: 36px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .payment-name {
+            font-size: 13px;
+            color: #333;
+        }
+
+        /* 商品列表 */
+        .order-item {
+            display: flex;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .order-item:last-child {
+            border-bottom: none;
+        }
+
+        .item-image {
+            width: 60px;
+            height: 60px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            color: #999;
+        }
+        .item-image img { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 4px; }
+
+        .item-info {
+            flex: 1;
+        }
+
+        .item-name {
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .item-spec {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .item-right {
+            text-align: right;
+        }
+
+        .item-price {
+            color: #ff5722;
+            font-size: 14px;
+        }
+
+        .item-quantity {
+            font-size: 12px;
+            color: #999;
+            margin-top: 4px;
+        }
+
+        .prescription-badge {
+            display: inline-block;
+            background: #ff9800;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 11px;
+            margin-left: 5px;
+        }
+
+        /* 费用明细 */
+        .fee-detail {
+            padding: 15px 0;
+        }
+
+        .fee-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .fee-label {
+            color: #666;
+        }
+
+        .fee-value {
+            color: #333;
+        }
+
+        .fee-total {
+            border-top: 1px solid #e0e0e0;
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+
+        .fee-total .fee-value {
+            color: #ff5722;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        /* 底部结算栏 */
+        .checkout-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+        }
+
+        .total-info {
+            display: flex;
+            align-items: baseline;
+            gap: 5px;
+        }
+
+        .total-label {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .total-amount {
+            color: #ff5722;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .pay-btn {
+            padding: 10px 35px;
+            background: #4a9b4e;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .pay-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* 优惠券模态框样式 */
+        .coupon-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 400px;
+            max-height: 500px;
+            overflow: hidden;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .coupon-list {
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .coupon-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            margin-bottom: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .coupon-item.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .coupon-item.selected {
+            border-color: #4a9b4e;
+            background: #f8fff9;
+        }
+
+        .coupon-amount {
+            color: #ff5722;
+            font-size: 18px;
+            font-weight: bold;
+            margin-right: 12px;
+            min-width: 50px;
+        }
+
+        .coupon-info {
+            flex: 1;
+        }
+
+        .coupon-name {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .coupon-desc {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .selected-mark {
+            color: #4a9b4e;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            z-index: 3000;
+            display: none;
+        }
+
+        .toast.show {
+            display: block;
+            animation: fadeInOut 2s ease;
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0; }
+            20%, 80% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <div class="top-nav">
+        <div class="back-btn" onclick="goBack()">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+        </div>
+        <div class="page-title">订单结算</div>
+        <div style="width: 24px;"></div>
+    </div>
+
+    <!-- 收货地址 -->
+    <div class="section">
+        <div class="section-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+            </svg>
+            收货地址
+        </div>
+
+        <!-- 地址选择区域 -->
+        <div class="address-list">
+            <div class="address-card selected" onclick="selectAddress(this)">
+                <div class="address-header">
+                    <span class="address-name">张三</span>
+                    <span class="address-phone">138****8888</span>
+                </div>
+                <div class="address-detail">
+                    北京市朝阳区建国路88号SOHO现代城A座2801室
+                </div>
+                <div class="address-default">默认地址</div>
+            </div>
+
+            <div class="address-card" onclick="selectAddress(this)">
+                <div class="address-header">
+                    <span class="address-name">李四</span>
+                    <span class="address-phone">139****9999</span>
+                </div>
+                <div class="address-detail">
+                    上海市浦东新区陆家嘴金融中心大厦1208室
+                </div>
+            </div>
+
+            <div class="address-card" onclick="selectAddress(this)">
+                <div class="address-header">
+                    <span class="address-name">王五</span>
+                    <span class="address-phone">136****6666</span>
+                </div>
+                <div class="address-detail">
+                    广州市天河区珠江新城CBD核心区写字楼3501
+                </div>
+            </div>
+        </div>
+
+        <div class="other-address-btn" onclick="goToAddressManage()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+            </svg>
+            <span>选择其他地址</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 18l6-6-6-6"/>
+            </svg>
+        </div>
+    </div>
+
+    <!-- 配送方式 -->
+    <div class="section">
+        <div class="section-title">配送方式</div>
+        <div class="delivery-options">
+            <div class="delivery-option selected" onclick="selectDelivery(this, 'ems', 68)">
+                <div class="radio-circle"></div>
+                <div class="delivery-info">
+                    <div class="delivery-name">EMS国际快递</div>
+                    <div class="delivery-desc">预计7-15个工作日送达</div>
+                </div>
+                <div class="delivery-price">¥68</div>
+            </div>
+            <div class="delivery-option" onclick="selectDelivery(this, 'sf', 98)">
+                <div class="radio-circle"></div>
+                <div class="delivery-info">
+                    <div class="delivery-name">顺丰国际</div>
+                    <div class="delivery-desc">预计5-10个工作日送达</div>
+                </div>
+                <div class="delivery-price">¥98</div>
+            </div>
+        </div>
+        <div class="id-upload-notice" id="idNotice">
+            温馨提示：顺丰国际需上传身份证用于清关
+        </div>
+    </div>
+
+    <!-- 优惠券选择 -->
+    <div class="section">
+        <div class="section-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20.5 6.5L15.5 1.5a2.121 2.121 0 0 0-3 0L1.5 12.5a2.121 2.121 0 0 0 0 3l10 10a2.121 2.121 0 0 0 3 0L25.5 14.5a2.121 2.121 0 0 0 0-3z"></path>
+                <path d="M15 7l3 3"></path>
+            </svg>
+            优惠券
+        </div>
+        <div class="coupon-selector" onclick="showCoupons()">
+            <div class="coupon-info">
+                <span class="coupon-text">有3张可用优惠券</span>
+                <span class="selected-coupon" id="selectedCoupon">请选择</span>
+            </div>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 18l6-6-6-6"/>
+            </svg>
+        </div>
+    </div>
+
+    <!-- 积分抵扣 -->
+    <div class="section">
+        <div class="section-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"></polygon>
+            </svg>
+            积分抵扣
+        </div>
+        <div class="points-section">
+            <div class="points-toggle">
+                <span class="points-label">使用积分抵扣</span>
+                <div class="toggle-switch" onclick="togglePoints()">
+                    <div class="toggle-slider" id="pointsToggle"></div>
+                </div>
+            </div>
+            <div class="points-input-area" id="pointsInputArea" style="display: none;">
+                <div class="points-available">可用积分：888</div>
+                <div class="points-input">
+                    <input type="number" id="pointsInput" placeholder="输入积分数量" max="888" min="0" oninput="calculatePointsDeduction()">
+                    <button class="use-all-points" onclick="useAllPoints()">全部使用</button>
+                </div>
+                <div class="points-tip">100积分 = 1元</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 支付方式 -->
+    <div class="section">
+        <div class="section-title">支付方式</div>
+        <div class="payment-options">
+            <div class="payment-option selected" onclick="selectPayment(this, 'wechat')">
+                <div class="payment-icon" style="color: #09bb07;">微</div>
+                <div class="payment-name">微信支付</div>
+            </div>
+            <div class="payment-option" onclick="selectPayment(this, 'alipay')">
+                <div class="payment-icon" style="color: #1678ff;">支</div>
+                <div class="payment-name">支付宝</div>
+            </div>
+            <div class="payment-option" onclick="selectPayment(this, 'union')">
+                <div class="payment-icon" style="color: #ff5722;">银</div>
+                <div class="payment-name">银联</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 商品清单 -->
+    <div class="section">
+        <div class="section-title">商品清单</div>
+        <div id="orderItems">
+            <!-- 商品列表将通过JS动态生成 -->
+        </div>
+    </div>
+
+    <!-- 费用明细 -->
+    <div class="section">
+        <div class="section-title">费用明细</div>
+        <div class="fee-detail">
+            <div class="fee-row">
+                <span class="fee-label">商品金额</span>
+                <span class="fee-value" id="subtotal">¥0</span>
+            </div>
+            <div class="fee-row">
+                <span class="fee-label">运费</span>
+                <span class="fee-value" id="shipping">¥68</span>
+            </div>
+            <div class="fee-row">
+                <span class="fee-label">税金</span>
+                <span class="fee-value" id="tax">¥0</span>
+            </div>
+            <div class="fee-row">
+                <span class="fee-label">优惠券</span>
+                <span class="fee-value" id="couponDiscount" style="color: #4a9b4e;">-¥0</span>
+            </div>
+            <div class="fee-row">
+                <span class="fee-label">积分抵扣</span>
+                <span class="fee-value" id="pointsDiscount" style="color: #4a9b4e;">-¥0</span>
+            </div>
+            <div class="fee-row fee-total">
+                <span class="fee-label">应付总额</span>
+                <span class="fee-value" id="totalAmount">¥0</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部结算栏 -->
+    <div class="checkout-bar">
+        <div class="total-info">
+            <span class="total-label">合计：</span>
+            <span class="total-amount" id="bottomTotal">¥0</span>
+        </div>
+        <button class="pay-btn" onclick="submitOrder()">去支付</button>
+    </div>
+
+    <!-- Toast提示 -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // 全局变量
+        let orderData = {
+            items: [],
+            deliveryMethod: 'ems',
+            deliveryFee: 68,
+            paymentMethod: 'wechat',
+            subtotal: 0,
+            tax: 0,
+            couponDiscount: 0,
+            pointsDiscount: 0,
+            total: 0,
+            hasPrescription: false,
+            selectedAddress: 0,
+            selectedCoupon: null,
+            pointsUsed: 0
+        };
+
+        // 模拟优惠券数据
+        const availableCoupons = [
+            { id: 1, name: '新人专享券', amount: 20, minAmount: 100, desc: '满100减20' },
+            { id: 2, name: '满减优惠券', amount: 50, minAmount: 300, desc: '满300减50' },
+            { id: 3, name: '处方药专用券', amount: 30, minAmount: 200, desc: '满200减30' }
+        ];
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 从localStorage获取订单商品
+            const checkoutItems = JSON.parse(localStorage.getItem('checkoutItems') || '[]');
+            orderData.items = checkoutItems;
+            
+            // 检查是否有处方药
+            orderData.hasPrescription = checkoutItems.some(item => item.isPrescription);
+            
+            renderOrderItems();
+            calculateTotal();
+        });
+
+        // 渲染商品列表
+        function renderOrderItems() {
+            const container = document.getElementById('orderItems');
+            
+            container.innerHTML = orderData.items.map(item => `
+                <div class="order-item">
+                    <div class="item-image"><img src="${getProductImage(item.id)}" alt="${item.name}"></div>
+                    <div class="item-info">
+                        <div class="item-name">
+                            ${item.name}
+                            ${item.isPrescription ? '<span class="prescription-badge">处方药</span>' : ''}
+                        </div>
+                        <div class="item-spec">规格信息</div>
+                    </div>
+                    <div class="item-right">
+                        <div class="item-price">¥${item.price}</div>
+                        <div class="item-quantity">x${item.quantity}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 获取商品图片（演示占位）
+        function getProductImage(id) {
+            switch (Number(id)) {
+                case 3:
+                case 7:
+                    return 'assets/images/products/product-prescription.svg';
+                case 4:
+                    return 'assets/images/products/product-eye.svg';
+                case 5:
+                    return 'assets/images/products/product-health.svg';
+                case 6:
+                    return 'assets/images/products/product-device.svg';
+                case 8:
+                    return 'assets/images/products/product-beauty.svg';
+                default:
+                    return 'assets/images/products/product-otc.svg';
+            }
+        }
+
+        // 计算总价
+        function calculateTotal() {
+            // 计算商品小计
+            orderData.subtotal = orderData.items.reduce((sum, item) => {
+                return sum + (item.price * item.quantity);
+            }, 0);
+
+            // 计算税金（假设为商品总价的8%）
+            orderData.tax = Math.round(orderData.subtotal * 0.08);
+
+            // 计算总价：商品价格 + 税金 + 运费 - 优惠券 - 积分抵扣
+            orderData.total = orderData.subtotal + orderData.tax + orderData.deliveryFee - orderData.couponDiscount - orderData.pointsDiscount;
+
+            // 确保总价不为负数
+            if (orderData.total < 0) orderData.total = 0;
+
+            // 更新显示
+            document.getElementById('subtotal').textContent = `¥${orderData.subtotal}`;
+            document.getElementById('tax').textContent = `¥${orderData.tax}`;
+            document.getElementById('shipping').textContent = `¥${orderData.deliveryFee}`;
+            document.getElementById('couponDiscount').textContent = `-¥${orderData.couponDiscount}`;
+            document.getElementById('pointsDiscount').textContent = `-¥${orderData.pointsDiscount}`;
+            document.getElementById('totalAmount').textContent = `¥${orderData.total}`;
+            document.getElementById('bottomTotal').textContent = `¥${orderData.total}`;
+        }
+
+        // 选择配送方式
+        function selectDelivery(element, method, fee) {
+            // 更新选中状态
+            document.querySelectorAll('.delivery-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            element.classList.add('selected');
+            
+            // 更新数据
+            orderData.deliveryMethod = method;
+            orderData.deliveryFee = fee;
+            
+            // 显示/隐藏身份证提示
+            const idNotice = document.getElementById('idNotice');
+            if (method === 'sf') {
+                idNotice.classList.add('show');
+            } else {
+                idNotice.classList.remove('show');
+            }
+            
+            // 重新计算总价
+            calculateTotal();
+        }
+
+        // 选择支付方式
+        function selectPayment(element, method) {
+            // 更新选中状态
+            document.querySelectorAll('.payment-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            element.classList.add('selected');
+            
+            // 更新数据
+            orderData.paymentMethod = method;
+        }
+
+        // 提交订单
+        function submitOrder() {
+            // 模拟支付流程
+            showToast('正在生成订单...');
+
+            // 保存订单数据
+            localStorage.setItem('currentOrder', JSON.stringify(orderData));
+
+            // 延迟跳转到二维码支付页面
+            setTimeout(() => {
+                window.location.href = 'payment-qrcode-page.html';
+            }, 1500);
+        }
+
+        // 返回
+        function goBack() {
+            window.history.back();
+        }
+
+        // 选择地址
+        function selectAddress(element) {
+            // 移除其他地址的选中状态
+            document.querySelectorAll('.address-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+
+            // 添加当前地址的选中状态
+            element.classList.add('selected');
+
+            // 更新选中地址索引
+            const addressCards = document.querySelectorAll('.address-card');
+            orderData.selectedAddress = Array.from(addressCards).indexOf(element);
+        }
+
+        // 跳转到地址管理页面
+        function goToAddressManage() {
+            window.location.href = 'address-manage-page.html';
+        }
+
+        // 显示优惠券列表
+        function showCoupons() {
+            let couponListHtml = '<div class="coupon-modal"><div class="modal-content"><div class="modal-header">选择优惠券<button class="close-btn" onclick="closeCoupons()">×</button></div><div class="coupon-list">';
+
+            availableCoupons.forEach(coupon => {
+                const canUse = orderData.subtotal >= coupon.minAmount;
+                const isSelected = orderData.selectedCoupon && orderData.selectedCoupon.id === coupon.id;
+
+                couponListHtml += `
+                    <div class="coupon-item ${canUse ? '' : 'disabled'} ${isSelected ? 'selected' : ''}" onclick="${canUse ? `selectCoupon(${coupon.id})` : ''}">
+                        <div class="coupon-amount">¥${coupon.amount}</div>
+                        <div class="coupon-info">
+                            <div class="coupon-name">${coupon.name}</div>
+                            <div class="coupon-desc">${coupon.desc}</div>
+                        </div>
+                        ${isSelected ? '<div class="selected-mark">✓</div>' : ''}
+                    </div>
+                `;
+            });
+
+            couponListHtml += '</div></div></div>';
+
+            // 创建模态框
+            const modal = document.createElement('div');
+            modal.id = 'couponModal';
+            modal.className = 'modal-overlay active';
+            modal.innerHTML = couponListHtml;
+            document.body.appendChild(modal);
+        }
+
+        // 关闭优惠券模态框
+        function closeCoupons() {
+            const modal = document.getElementById('couponModal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        // 选择优惠券
+        function selectCoupon(couponId) {
+            const coupon = availableCoupons.find(c => c.id === couponId);
+            if (coupon && orderData.subtotal >= coupon.minAmount) {
+                orderData.selectedCoupon = coupon;
+                orderData.couponDiscount = coupon.amount;
+
+                // 更新显示
+                document.getElementById('selectedCoupon').textContent = coupon.name;
+
+                // 重新计算总价
+                calculateTotal();
+
+                // 关闭模态框
+                closeCoupons();
+            }
+        }
+
+        // 切换积分开关
+        function togglePoints() {
+            const toggle = document.getElementById('pointsToggle').parentElement;
+            const inputArea = document.getElementById('pointsInputArea');
+
+            if (toggle.classList.contains('active')) {
+                // 关闭积分抵扣
+                toggle.classList.remove('active');
+                inputArea.style.display = 'none';
+                orderData.pointsUsed = 0;
+                orderData.pointsDiscount = 0;
+                document.getElementById('pointsInput').value = '';
+            } else {
+                // 开启积分抵扣
+                toggle.classList.add('active');
+                inputArea.style.display = 'block';
+            }
+
+            calculateTotal();
+        }
+
+        // 计算积分抵扣
+        function calculatePointsDeduction() {
+            const pointsInput = document.getElementById('pointsInput');
+            const points = Math.min(parseInt(pointsInput.value) || 0, 888);
+
+            // 100积分 = 1元
+            orderData.pointsUsed = points;
+            orderData.pointsDiscount = Math.floor(points / 100);
+
+            calculateTotal();
+        }
+
+        // 使用全部积分
+        function useAllPoints() {
+            const pointsInput = document.getElementById('pointsInput');
+            pointsInput.value = '888';
+            calculatePointsDeduction();
+        }
+
+        // 显示提示
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

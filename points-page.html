@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的积分 - 芝生药局</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background-color: #f8faf8;
+            color: #333;
+        }
+
+        /* 顶部导航 */
+        .top-nav {
+            background: white;
+            padding: 12px 15px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .back-btn {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            margin-right: 15px;
+        }
+
+        .page-title {
+            flex: 1;
+            text-align: center;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        /* 积分余额卡片 */
+        .points-header {
+            background: linear-gradient(135deg, #4a9b4e, #6ab56e);
+            padding: 30px 20px;
+            color: white;
+            margin-bottom: 10px;
+        }
+
+        .points-balance {
+            text-align: center;
+        }
+
+        .balance-label {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+
+        .balance-amount {
+            font-size: 48px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .balance-unit {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .points-tips {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        /* 积分使用规则 */
+        .points-rules {
+            background: white;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+
+        .rules-title {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .rule-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 12px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .rule-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .rule-dot {
+            width: 6px;
+            height: 6px;
+            background: #4a9b4e;
+            border-radius: 50%;
+            margin: 7px 10px 0 0;
+            flex-shrink: 0;
+        }
+
+        .rule-text {
+            color: #666;
+        }
+
+        /* 积分记录 */
+        .points-records {
+            background: white;
+            margin-bottom: 10px;
+        }
+
+        .records-header {
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .records-title {
+            font-size: 16px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .record-item {
+            padding: 15px;
+            border-bottom: 1px solid #f8f8f8;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .record-item:last-child {
+            border-bottom: none;
+        }
+
+        .record-info {
+            flex: 1;
+        }
+
+        .record-title {
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .record-desc {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .record-points {
+            font-size: 16px;
+            font-weight: 600;
+            text-align: right;
+        }
+
+        .points-earn {
+            color: #4a9b4e;
+        }
+
+        .points-use {
+            color: #f44336;
+        }
+
+        /* 空状态 */
+        .empty-state {
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        .empty-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background: #f0f0f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ccc;
+            font-size: 36px;
+        }
+
+        .empty-text {
+            color: #999;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .empty-btn {
+            padding: 10px 30px;
+            background: linear-gradient(135deg, #4a9b4e, #6ab56e);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        /* 底部导航 */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+            z-index: 1000;
+        }
+
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #666;
+            padding: 5px;
+            cursor: pointer;
+        }
+
+        .nav-item.active {
+            color: #4a9b4e;
+        }
+
+        .nav-icon {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 4px;
+            background: currentColor;
+            mask-size: contain;
+            -webkit-mask-size: contain;
+        }
+
+        .nav-icon.home {
+            mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>');
+            -webkit-mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>');
+        }
+
+        .nav-icon.products {
+            mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>');
+            -webkit-mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>');
+        }
+
+        .nav-icon.cart {
+            mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>');
+            -webkit-mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>');
+        }
+
+        .nav-icon.account {
+            mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>');
+            -webkit-mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>');
+        }
+
+        .nav-text {
+            font-size: 11px;
+        }
+
+        /* 加载更多 */
+        .load-more {
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .load-more-btn {
+            color: #666;
+            font-size: 14px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <div class="top-nav">
+        <div class="back-btn" onclick="goBack()">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+        </div>
+        <div class="page-title">我的积分</div>
+        <div style="width: 24px;"></div>
+    </div>
+
+    <!-- 积分余额 -->
+    <div class="points-header">
+        <div class="points-balance">
+            <div class="balance-label">当前积分余额</div>
+            <div class="balance-amount">8,888</div>
+            <div class="balance-unit">积分</div>
+        </div>
+        <div class="points-tips">
+            💡 积分可用于商城消费，1积分 = 0.01元，购买商品可获得积分奖励
+        </div>
+    </div>
+
+    <!-- 积分使用规则 -->
+    <div class="points-rules">
+        <div class="rules-title">积分使用规则</div>
+        <div class="rule-item">
+            <div class="rule-dot"></div>
+            <div class="rule-text">100积分 = 1元，可抵扣订单金额</div>
+        </div>
+        <div class="rule-item">
+            <div class="rule-dot"></div>
+            <div class="rule-text">购买商品获得相应积分，1元 = 1积分</div>
+        </div>
+        <div class="rule-item">
+            <div class="rule-dot"></div>
+            <div class="rule-text">积分有效期为3年，过期将自动清零</div>
+        </div>
+        <div class="rule-item">
+            <div class="rule-dot"></div>
+            <div class="rule-text">单笔订单最多可使用70%积分抵扣</div>
+        </div>
+    </div>
+
+    <!-- 积分记录 -->
+    <div class="points-records">
+        <div class="records-header">
+            <div class="records-title">积分明细</div>
+        </div>
+
+        <div class="record-item">
+            <div class="record-info">
+                <div class="record-title">购买商品获得积分</div>
+                <div class="record-desc">订单号：202501150001 | 2025-01-15 14:30</div>
+            </div>
+            <div class="record-points points-earn">+128</div>
+        </div>
+
+        <div class="record-item">
+            <div class="record-info">
+                <div class="record-title">积分抵扣</div>
+                <div class="record-desc">订单号：202501140002 | 2025-01-14 10:22</div>
+            </div>
+            <div class="record-points points-use">-500</div>
+        </div>
+
+        <div class="record-item">
+            <div class="record-info">
+                <div class="record-title">购买商品获得积分</div>
+                <div class="record-desc">订单号：202501140002 | 2025-01-14 10:22</div>
+            </div>
+            <div class="record-points points-earn">+216</div>
+        </div>
+
+        <div class="record-item">
+            <div class="record-info">
+                <div class="record-title">新用户奖励积分</div>
+                <div class="record-desc">注册奖励 | 2025-01-10 16:45</div>
+            </div>
+            <div class="record-points points-earn">+1000</div>
+        </div>
+
+        <div class="record-item">
+            <div class="record-info">
+                <div class="record-title">购买商品获得积分</div>
+                <div class="record-desc">订单号：202501100003 | 2025-01-10 09:15</div>
+            </div>
+            <div class="record-points points-earn">+136</div>
+        </div>
+
+        <div class="record-item">
+            <div class="record-info">
+                <div class="record-title">积分抵扣</div>
+                <div class="record-desc">订单号：202501080004 | 2025-01-08 15:30</div>
+            </div>
+            <div class="record-points points-use">-300</div>
+        </div>
+
+        <div class="record-item">
+            <div class="record-info">
+                <div class="record-title">评价商品获得积分</div>
+                <div class="record-desc">商品评价奖励 | 2025-01-07 18:20</div>
+            </div>
+            <div class="record-points points-earn">+50</div>
+        </div>
+
+        <div class="record-item">
+            <div class="record-info">
+                <div class="record-title">签到获得积分</div>
+                <div class="record-desc">连续签到7天 | 2025-01-06 08:00</div>
+            </div>
+            <div class="record-points points-earn">+100</div>
+        </div>
+
+        <div class="record-item">
+            <div class="record-info">
+                <div class="record-title">购买商品获得积分</div>
+                <div class="record-desc">订单号：202501050005 | 2025-01-05 20:12</div>
+            </div>
+            <div class="record-points points-earn">+298</div>
+        </div>
+
+        <div class="record-item">
+            <div class="record-info">
+                <div class="record-title">推荐好友奖励</div>
+                <div class="record-desc">好友首次下单 | 2025-01-03 11:45</div>
+            </div>
+            <div class="record-points points-earn">+200</div>
+        </div>
+    </div>
+
+    <!-- 加载更多 -->
+    <div class="load-more">
+        <span class="load-more-btn" onclick="loadMore()">加载更多记录</span>
+    </div>
+
+    <!-- 底部导航 -->
+    <div class="bottom-nav">
+        <div class="nav-item" onclick="goHome()">
+            <div class="nav-icon home"></div>
+            <span class="nav-text">首页</span>
+        </div>
+        <div class="nav-item" onclick="goProducts()">
+            <div class="nav-icon products"></div>
+            <span class="nav-text">商品</span>
+        </div>
+        <div class="nav-item" onclick="goCart()">
+            <div class="nav-icon cart"></div>
+            <span class="nav-text">购物车</span>
+        </div>
+        <div class="nav-item active" onclick="goAccount()">
+            <div class="nav-icon account"></div>
+            <span class="nav-text">我的</span>
+        </div>
+    </div>
+
+    <script>
+        // 返回
+        function goBack() {
+            window.history.back();
+        }
+
+        // 加载更多记录
+        function loadMore() {
+            alert('没有更多记录了');
+        }
+
+        // 导航函数
+        function goHome() {
+            window.location.href = 'index.html';
+        }
+
+        function goProducts() {
+            window.location.href = 'zhisheng-pharmacy-prototype.html';
+        }
+
+        function goCart() {
+            window.location.href = 'zhisheng-pharmacy-prototype.html';
+        }
+
+        function goAccount() {
+            window.location.href = 'zhisheng-pharmacy-prototype.html';
+        }
+    </script>
+</body>
+</html>

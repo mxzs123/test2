@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>健康问卷 - 芝生药局</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background-color: #f8faf8;
+            color: #333;
+            padding-bottom: 80px;
+        }
+
+        /* 顶部导航 */
+        .top-nav {
+            background: white;
+            padding: 12px 15px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .page-title {
+            flex: 1;
+            text-align: center;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        /* 提示信息 */
+        .notice-banner {
+            background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+            padding: 15px;
+            margin: 10px 15px;
+            border-radius: 8px;
+        }
+
+        .notice-title {
+            color: #ff6f00;
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .notice-content {
+            color: #666;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        /* 表单区域 */
+        .form-section {
+            background: white;
+            margin: 10px 0;
+            padding: 20px 15px;
+        }
+
+        .form-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .required {
+            color: #ff5722;
+            margin-left: 2px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #4a9b4e;
+        }
+
+        .form-textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            min-height: 80px;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        .form-textarea:focus {
+            outline: none;
+            border-color: #4a9b4e;
+        }
+
+        /* 单选/复选框组 */
+        .radio-group, .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .radio-item, .checkbox-item {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .radio-input, .checkbox-input {
+            width: 18px;
+            height: 18px;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+        .radio-label, .checkbox-label {
+            font-size: 14px;
+            color: #333;
+            cursor: pointer;
+        }
+
+        /* 身高体重输入组 */
+        .input-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .input-group .form-input {
+            flex: 1;
+        }
+
+        .input-unit {
+            font-size: 14px;
+            color: #666;
+            min-width: 30px;
+        }
+
+        /* 视频问诊选项 */
+        .consultation-option {
+            background: #f0f8f1;
+            border: 1px solid #4a9b4e;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .consultation-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .consultation-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-left: 10px;
+        }
+
+        .consultation-desc {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .consultation-fee {
+            color: #ff5722;
+            font-weight: 600;
+            margin-top: 8px;
+            font-size: 14px;
+        }
+
+        /* 底部提交栏 */
+        .submit-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            padding: 15px;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+        }
+
+        .agreement-check {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .agreement-checkbox {
+            margin-right: 8px;
+            margin-top: 2px;
+        }
+
+        .agreement-text {
+            font-size: 12px;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .agreement-link {
+            color: #4a9b4e;
+            text-decoration: none;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #4a9b4e, #6ab56e);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* 提示文字 */
+        .help-text {
+            font-size: 12px;
+            color: #999;
+            margin-top: 5px;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            z-index: 3000;
+            display: none;
+        }
+
+        .toast.show {
+            display: block;
+            animation: fadeInOut 2s ease;
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0; }
+            20%, 80% { opacity: 1; }
+        }
+
+        /* 症状选择网格 */
+        .symptom-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .symptom-item {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            text-align: center;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .symptom-item.selected {
+            background: #e8f5e9;
+            border-color: #4a9b4e;
+            color: #4a9b4e;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <div class="top-nav">
+        <div class="page-title">健康问卷</div>
+    </div>
+
+    <!-- 提示信息 -->
+    <div class="notice-banner">
+        <div class="notice-title">重要提示</div>
+        <div class="notice-content">
+            为确保用药安全，请如实填写以下健康信息。您的信息将严格保密，仅用于药师审核。根据您的情况，可能需要进行视频问诊（费用另计）。
+        </div>
+    </div>
+
+    <!-- 基本信息 -->
+    <div class="form-section">
+        <div class="form-title">基本信息</div>
+        
+        <div class="form-group">
+            <label class="form-label">性别 <span class="required">*</span></label>
+            <div class="radio-group">
+                <div class="radio-item">
+                    <input type="radio" id="male" name="gender" class="radio-input" checked>
+                    <label for="male" class="radio-label">男</label>
+                </div>
+                <div class="radio-item">
+                    <input type="radio" id="female" name="gender" class="radio-input">
+                    <label for="female" class="radio-label">女</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">年龄 <span class="required">*</span></label>
+            <input type="number" class="form-input" placeholder="请输入您的年龄" id="age">
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">身高体重</label>
+            <div class="input-group">
+                <input type="number" class="form-input" placeholder="身高" id="height">
+                <span class="input-unit">cm</span>
+                <input type="number" class="form-input" placeholder="体重" id="weight">
+                <span class="input-unit">kg</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 症状描述 -->
+    <div class="form-section">
+        <div class="form-title">症状描述</div>
+        
+        <div class="form-group">
+            <label class="form-label">主要症状 <span class="required">*</span></label>
+            <div class="symptom-grid">
+                <div class="symptom-item" onclick="toggleSymptom(this)">发热</div>
+                <div class="symptom-item" onclick="toggleSymptom(this)">咳嗽</div>
+                <div class="symptom-item" onclick="toggleSymptom(this)">头痛</div>
+                <div class="symptom-item" onclick="toggleSymptom(this)">咽痛</div>
+                <div class="symptom-item" onclick="toggleSymptom(this)">鼻塞</div>
+                <div class="symptom-item" onclick="toggleSymptom(this)">流涕</div>
+                <div class="symptom-item" onclick="toggleSymptom(this)">乏力</div>
+                <div class="symptom-item" onclick="toggleSymptom(this)">其他</div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">症状持续时间 <span class="required">*</span></label>
+            <div class="radio-group">
+                <div class="radio-item">
+                    <input type="radio" id="days1" name="duration" class="radio-input" checked>
+                    <label for="days1" class="radio-label">1-3天</label>
+                </div>
+                <div class="radio-item">
+                    <input type="radio" id="days2" name="duration" class="radio-input">
+                    <label for="days2" class="radio-label">4-7天</label>
+                </div>
+                <div class="radio-item">
+                    <input type="radio" id="days3" name="duration" class="radio-input">
+                    <label for="days3" class="radio-label">一周以上</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">详细描述</label>
+            <textarea class="form-textarea" placeholder="请描述您的症状和用药需求（选填）"></textarea>
+        </div>
+    </div>
+
+    <!-- 过敏史 -->
+    <div class="form-section">
+        <div class="form-title">过敏史与用药史</div>
+        
+        <div class="form-group">
+            <label class="form-label">药物过敏史 <span class="required">*</span></label>
+            <div class="radio-group">
+                <div class="radio-item">
+                    <input type="radio" id="allergy-no" name="allergy" class="radio-input" checked onchange="toggleAllergyInput(false)">
+                    <label for="allergy-no" class="radio-label">无</label>
+                </div>
+                <div class="radio-item">
+                    <input type="radio" id="allergy-yes" name="allergy" class="radio-input" onchange="toggleAllergyInput(true)">
+                    <label for="allergy-yes" class="radio-label">有</label>
+                </div>
+            </div>
+            <div id="allergyDetail" style="display: none; margin-top: 10px;">
+                <input type="text" class="form-input" placeholder="请说明过敏药物名称">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">正在服用的药物</label>
+            <textarea class="form-textarea" placeholder="请列出您正在服用的其他药物（选填）"></textarea>
+            <span class="help-text">如有多种药物，请用逗号分隔</span>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">既往病史</label>
+            <div class="checkbox-group">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="history1" class="checkbox-input">
+                    <label for="history1" class="checkbox-label">高血压</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="history2" class="checkbox-input">
+                    <label for="history2" class="checkbox-label">糖尿病</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="history3" class="checkbox-input">
+                    <label for="history3" class="checkbox-label">心脏病</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="history4" class="checkbox-input">
+                    <label for="history4" class="checkbox-label">肝肾疾病</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="history5" class="checkbox-input">
+                    <label for="history5" class="checkbox-label">无</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 视频问诊 -->
+    <div class="form-section">
+        <div class="form-title">视频问诊服务</div>
+        
+        <div class="consultation-option">
+            <div class="consultation-header">
+                <input type="checkbox" id="consultation" class="checkbox-input">
+                <label for="consultation" class="consultation-title">需要视频问诊</label>
+            </div>
+            <div class="consultation-desc">
+                由专业药师提供一对一视频问诊服务，为您提供专业的用药指导和健康建议。
+            </div>
+            <div class="consultation-fee">
+                服务费用：¥30
+            </div>
+        </div>
+        
+        <p class="help-text" style="margin-top: 10px;">
+            注：根据您填写的信息，药师可能要求必须进行视频问诊才能购买处方药
+        </p>
+    </div>
+
+    <!-- 底部提交栏 -->
+    <div class="submit-bar">
+        <div class="agreement-check">
+            <input type="checkbox" id="agreement" class="agreement-checkbox" onchange="toggleSubmit()">
+            <label for="agreement" class="agreement-text">
+                我已阅读并同意
+                <a href="#" class="agreement-link">《用药安全承诺书》</a>
+                及
+                <a href="#" class="agreement-link">《隐私保护协议》</a>
+            </label>
+        </div>
+        <button class="submit-btn" id="submitBtn" disabled onclick="submitQuestionnaire()">提交问卷</button>
+    </div>
+
+    <!-- Toast提示 -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // 症状选择
+        function toggleSymptom(element) {
+            element.classList.toggle('selected');
+        }
+
+        // 切换过敏输入框
+        function toggleAllergyInput(show) {
+            const allergyDetail = document.getElementById('allergyDetail');
+            allergyDetail.style.display = show ? 'block' : 'none';
+        }
+
+        // 切换提交按钮状态
+        function toggleSubmit() {
+            const agreement = document.getElementById('agreement');
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = !agreement.checked;
+        }
+
+        // 验证表单
+        function validateForm() {
+            const age = document.getElementById('age').value;
+            
+            if (!age) {
+                showToast('请填写年龄');
+                return false;
+            }
+            
+            // 检查是否选择了症状
+            const selectedSymptoms = document.querySelectorAll('.symptom-item.selected');
+            if (selectedSymptoms.length === 0) {
+                showToast('请选择至少一个症状');
+                return false;
+            }
+            
+            return true;
+        }
+
+        // 提交问卷
+        function submitQuestionnaire() {
+            if (!validateForm()) {
+                return;
+            }
+            
+            // 收集表单数据
+            const formData = {
+                gender: document.querySelector('input[name="gender"]:checked').id,
+                age: document.getElementById('age').value,
+                height: document.getElementById('height').value,
+                weight: document.getElementById('weight').value,
+                symptoms: Array.from(document.querySelectorAll('.symptom-item.selected')).map(el => el.textContent),
+                duration: document.querySelector('input[name="duration"]:checked').id,
+                hasAllergy: document.getElementById('allergy-yes').checked,
+                needConsultation: document.getElementById('consultation').checked,
+                timestamp: new Date().toISOString()
+            };
+            
+            // 保存数据
+            localStorage.setItem('questionnaireData', JSON.stringify(formData));
+            
+            // 更新订单状态
+            const currentOrder = JSON.parse(localStorage.getItem('currentOrder') || '{}');
+            currentOrder.status = 'reviewing';
+            currentOrder.questionnaireCompleted = true;
+            localStorage.setItem('currentOrder', JSON.stringify(currentOrder));
+            
+            showToast('提交成功，正在审核...');
+            
+            // 延迟跳转到订单详情页
+            setTimeout(() => {
+                window.location.href = 'order-detail-page.html?status=reviewing';
+            }, 1500);
+        }
+
+        // 显示提示
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

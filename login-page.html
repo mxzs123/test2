@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录 - 芝生药局</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Logo区域 */
+        .logo-section {
+            padding: 60px 20px 40px;
+            text-align: center;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 20px;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(74, 155, 78, 0.2);
+            font-size: 36px;
+            color: #4a9b4e;
+            font-weight: bold;
+        }
+
+        .app-name {
+            font-size: 24px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .app-slogan {
+            font-size: 14px;
+            color: #666;
+            margin-top: 8px;
+        }
+
+        /* 登录表单 */
+        .login-container {
+            flex: 1;
+            background: white;
+            border-radius: 30px 30px 0 0;
+            padding: 30px 20px;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.05);
+        }
+
+        /* 登录表单 */
+        .login-form {
+            padding: 20px 0;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: border-color 0.3s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #4a9b4e;
+        }
+
+        .form-input[type="password"] {
+            font-family: 'password';
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #4a9b4e, #6ab56e);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 30px;
+            transition: opacity 0.3s;
+        }
+
+        .login-btn:active {
+            opacity: 0.9;
+        }
+
+        /* 协议 */
+        .agreement {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .agreement-check {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .agreement-checkbox {
+            margin-right: 8px;
+            margin-top: 2px;
+        }
+
+        .agreement-text {
+            font-size: 12px;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .agreement-link {
+            color: #4a9b4e;
+            text-decoration: none;
+        }
+
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            z-index: 3000;
+            display: none;
+        }
+
+        .toast.show {
+            display: block;
+            animation: fadeInOut 2s ease;
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0; }
+            20%, 80% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Logo区域 -->
+    <div class="logo-section">
+        <div class="logo">芝</div>
+        <div class="app-name">芝生药局</div>
+        <div class="app-slogan">您的跨境健康伙伴</div>
+    </div>
+
+    <!-- 登录容器 -->
+    <div class="login-container">
+        <!-- 账号登录 -->
+        <div class="login-form">
+            <div class="form-group">
+                <label class="form-label">用户名</label>
+                <input type="text" class="form-input" id="username" placeholder="请输入用户名">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">密码</label>
+                <input type="password" class="form-input" id="password" placeholder="请输入密码">
+            </div>
+
+            <button class="login-btn" onclick="login()">登录</button>
+        </div>
+
+        <!-- 用户协议 -->
+        <div class="agreement">
+            <div class="agreement-check">
+                <input type="checkbox" id="agreement" class="agreement-checkbox" checked>
+                <label for="agreement" class="agreement-text">
+                    登录即表示同意
+                    <a href="#" class="agreement-link">《用户协议》</a>
+                    和
+                    <a href="#" class="agreement-link">《隐私政策》</a>
+                </label>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Toast提示 -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // 登录函数
+        function login() {
+            if (!checkAgreement()) return;
+
+            showToast('登录成功');
+
+            // 直接跳转到首页，无需验证
+            setTimeout(() => {
+                localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('userName', '用户');
+                window.location.href = 'index.html';
+            }, 1000);
+        }
+
+        // 检查用户协议
+        function checkAgreement() {
+            const agreement = document.getElementById('agreement');
+            if (!agreement.checked) {
+                showToast('请先同意用户协议');
+                return false;
+            }
+            return true;
+        }
+
+        // 显示提示
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

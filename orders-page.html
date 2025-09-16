@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的订单 - 芝生药局</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background-color: #f8faf8;
+            color: #333;
+        }
+
+        /* 顶部导航 */
+        .top-nav {
+            background: white;
+            padding: 12px 15px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .back-btn {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            margin-right: 15px;
+        }
+
+        .page-title {
+            flex: 1;
+            text-align: center;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        /* 订单Tab */
+        .order-tabs {
+            background: white;
+            display: flex;
+            border-bottom: 1px solid #eee;
+            position: sticky;
+            top: 56px;
+            z-index: 99;
+        }
+
+        .tab-item {
+            flex: 1;
+            padding: 14px 0;
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+            cursor: pointer;
+            position: relative;
+            transition: color 0.3s;
+        }
+
+        .tab-item.active {
+            color: #4a9b4e;
+            font-weight: 500;
+        }
+
+        .tab-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 2px;
+            background: #4a9b4e;
+        }
+
+        /* 订单卡片 */
+        .order-list {
+            padding: 10px;
+        }
+
+        .order-card {
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+
+        .order-header {
+            padding: 12px 15px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .order-number {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .order-status {
+            font-size: 13px;
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+
+        .status-pending {
+            background: #fff3e0;
+            color: #ff9800;
+        }
+
+        .status-reviewing {
+            background: #e3f2fd;
+            color: #2196f3;
+        }
+
+        .status-shipped {
+            background: #e8f5e9;
+            color: #4caf50;
+        }
+
+        .status-completed {
+            background: #f5f5f5;
+            color: #9e9e9e;
+        }
+
+        /* 订单商品 */
+        .order-items {
+            padding: 15px;
+        }
+
+        .order-item {
+            display: flex;
+            margin-bottom: 12px;
+        }
+
+        .order-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .item-image {
+            width: 60px;
+            height: 60px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            color: #999;
+        }
+        .item-image img { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 4px; }
+
+        .item-info {
+            flex: 1;
+        }
+
+        .item-name {
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 4px;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .item-spec {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .item-right {
+            text-align: right;
+        }
+
+        .item-price {
+            font-size: 14px;
+            color: #333;
+        }
+
+        .item-quantity {
+            font-size: 12px;
+            color: #999;
+            margin-top: 4px;
+        }
+
+        /* 订单底部 */
+        .order-footer {
+            padding: 12px 15px;
+            border-top: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .order-total {
+            font-size: 14px;
+        }
+
+        .total-amount {
+            color: #ff5722;
+            font-size: 16px;
+            font-weight: 600;
+            margin-left: 5px;
+        }
+
+        .order-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .order-btn {
+            padding: 6px 16px;
+            border-radius: 16px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-outline {
+            background: white;
+            border: 1px solid #ddd;
+            color: #666;
+        }
+
+        .btn-outline:hover {
+            border-color: #4a9b4e;
+            color: #4a9b4e;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4a9b4e, #6ab56e);
+            border: none;
+            color: white;
+        }
+
+        /* 空状态 */
+        .empty-state {
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        .empty-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background: #f0f0f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ccc;
+            font-size: 36px;
+        }
+
+        .empty-text {
+            color: #999;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .empty-btn {
+            padding: 10px 30px;
+            background: linear-gradient(135deg, #4a9b4e, #6ab56e);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        /* 处方药标签 */
+        .prescription-tag {
+            display: inline-block;
+            background: #ff9800;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 11px;
+            margin-left: 5px;
+        }
+
+        /* 加载更多 */
+        .load-more {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .load-more-btn {
+            color: #666;
+            font-size: 14px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <div class="top-nav">
+        <div class="back-btn" onclick="goBack()">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+        </div>
+        <div class="page-title">我的订单</div>
+        <div style="width: 24px;"></div>
+    </div>
+
+    <!-- 订单Tab -->
+    <div class="order-tabs">
+        <div class="tab-item active" onclick="switchTab(this, 'all')">全部</div>
+        <div class="tab-item" onclick="switchTab(this, 'pending')">待付款</div>
+        <div class="tab-item" onclick="switchTab(this, 'reviewing')">审核中</div>
+        <div class="tab-item" onclick="switchTab(this, 'shipped')">已发货</div>
+        <div class="tab-item" onclick="switchTab(this, 'completed')">已完成</div>
+    </div>
+
+    <!-- 订单列表 -->
+    <div class="order-list" id="orderList">
+        <!-- 订单1 - 审核中 -->
+        <div class="order-card" onclick="goToOrderDetail('202501150001', 'reviewing')">
+            <div class="order-header">
+                <span class="order-number">订单号：202501150001</span>
+                <span class="order-status status-reviewing">审核中</span>
+            </div>
+            <div class="order-items">
+                <div class="order-item">
+                    <div class="item-image"><img src="assets/images/products/product-prescription.svg" alt="处方感冒药"></div>
+                    <div class="item-info">
+                        <div class="item-name">
+                            处方感冒药
+                            <span class="prescription-tag">处方药</span>
+                        </div>
+                        <div class="item-spec">30片/盒</div>
+                    </div>
+                    <div class="item-right">
+                        <div class="item-price">¥128</div>
+                        <div class="item-quantity">x1</div>
+                    </div>
+                </div>
+            </div>
+            <div class="order-footer">
+                <div class="order-total">
+                    共1件商品 合计：<span class="total-amount">¥196</span>
+                </div>
+                <div class="order-actions">
+                    <button class="order-btn btn-outline" onclick="event.stopPropagation(); viewProgress()">查看进度</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 订单2 - 已发货 -->
+        <div class="order-card" onclick="goToOrderDetail('202501140002', 'shipped')">
+            <div class="order-header">
+                <span class="order-number">订单号：202501140002</span>
+                <span class="order-status status-shipped">已发货</span>
+            </div>
+            <div class="order-items">
+                <div class="order-item">
+                    <div class="item-image"><img src="assets/images/products/product-otc.svg" alt="龙角散清凉糖"></div>
+                    <div class="item-info">
+                        <div class="item-name">龙角散清凉糖</div>
+                        <div class="item-spec">40g/盒</div>
+                    </div>
+                    <div class="item-right">
+                        <div class="item-price">¥45</div>
+                        <div class="item-quantity">x2</div>
+                    </div>
+                </div>
+                <div class="order-item">
+                    <div class="item-image"><img src="assets/images/products/product-eye.svg" alt="参天FX眼药水"></div>
+                    <div class="item-info">
+                        <div class="item-name">参天FX眼药水</div>
+                        <div class="item-spec">12ml/瓶</div>
+                    </div>
+                    <div class="item-right">
+                        <div class="item-price">¥58</div>
+                        <div class="item-quantity">x1</div>
+                    </div>
+                </div>
+            </div>
+            <div class="order-footer">
+                <div class="order-total">
+                    共3件商品 合计：<span class="total-amount">¥216</span>
+                </div>
+                <div class="order-actions">
+                    <button class="order-btn btn-outline" onclick="event.stopPropagation(); trackShipment()">查看物流</button>
+                    <button class="order-btn btn-primary" onclick="event.stopPropagation(); confirmReceipt()">确认收货</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 订单3 - 已完成 -->
+        <div class="order-card" onclick="goToOrderDetail('202501100003', 'completed')">
+            <div class="order-header">
+                <span class="order-number">订单号：202501100003</span>
+                <span class="order-status status-completed">已完成</span>
+            </div>
+            <div class="order-items">
+                <div class="order-item">
+                    <div class="item-image"><img src="assets/images/products/product-otc.svg" alt="小林制药液体创可贴"></div>
+                    <div class="item-info">
+                        <div class="item-name">小林制药液体创可贴</div>
+                        <div class="item-spec">10g/支</div>
+                    </div>
+                    <div class="item-right">
+                        <div class="item-price">¥68</div>
+                        <div class="item-quantity">x1</div>
+                    </div>
+                </div>
+            </div>
+            <div class="order-footer">
+                <div class="order-total">
+                    共1件商品 合计：<span class="total-amount">¥136</span>
+                </div>
+                <div class="order-actions">
+                    <button class="order-btn btn-outline" onclick="event.stopPropagation(); rebuy()">再次购买</button>
+                    <button class="order-btn btn-primary" onclick="event.stopPropagation(); goToReview()">评价</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 空状态（初始隐藏） -->
+        <div class="empty-state" id="emptyState" style="display: none;">
+            <div class="empty-icon">空</div>
+            <div class="empty-text">暂无相关订单</div>
+            <button class="empty-btn" onclick="goShopping()">去购物</button>
+        </div>
+    </div>
+
+    <!-- 加载更多 -->
+    <div class="load-more">
+        <span class="load-more-btn" onclick="loadMore()">加载更多</span>
+    </div>
+
+    <script>
+        // 切换Tab
+        function switchTab(element, status) {
+            // 更新Tab状态
+            document.querySelectorAll('.tab-item').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            element.classList.add('active');
+            
+            // 这里可以根据status筛选订单
+            // 为演示简化，仅显示所有订单
+            if (status === 'pending') {
+                // 显示空状态
+                document.getElementById('orderList').style.display = 'none';
+                document.getElementById('emptyState').style.display = 'block';
+            } else {
+                document.getElementById('orderList').style.display = 'block';
+                document.getElementById('emptyState').style.display = 'none';
+            }
+        }
+
+        // 跳转到订单详情
+        function goToOrderDetail(orderNumber, status) {
+            localStorage.setItem('currentOrderNumber', orderNumber);
+            localStorage.setItem('currentOrderStatus', status);
+            window.location.href = `order-detail-page.html?order=${orderNumber}&status=${status}`;
+        }
+
+        // 查看进度
+        function viewProgress() {
+            alert('订单正在审核中，请耐心等待');
+        }
+
+        // 查看物流
+        function trackShipment() {
+            alert('物流信息：您的包裹正在运输中');
+        }
+
+        // 确认收货
+        function confirmReceipt() {
+            if (confirm('确认已收到商品？')) {
+                alert('确认收货成功');
+                // 刷新页面或更新订单状态
+                location.reload();
+            }
+        }
+
+        // 再次购买
+        function rebuy() {
+            alert('商品已加入购物车');
+        }
+
+        // 去评价
+        function goToReview() {
+            alert('评价功能开发中');
+        }
+
+        // 去购物
+        function goShopping() {
+            window.location.href = 'index.html';
+        }
+
+        // 加载更多
+        function loadMore() {
+            alert('没有更多订单了');
+        }
+
+        // 返回
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+</body>
+</html>

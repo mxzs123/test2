@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>证件上传 - 芝生药局</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background-color: #f8faf8;
+            color: #333;
+            padding-bottom: 80px;
+        }
+
+        /* 顶部导航 */
+        .top-nav {
+            background: white;
+            padding: 12px 15px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .back-btn {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            margin-right: 15px;
+        }
+
+        .page-title {
+            flex: 1;
+            text-align: center;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        /* 说明横幅 */
+        .info-banner {
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            padding: 15px;
+            margin: 10px;
+            border-radius: 8px;
+        }
+
+        .info-icon {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            background: #2196f3;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 20px;
+            color: white;
+            font-size: 12px;
+            margin-right: 8px;
+        }
+
+        .info-title {
+            color: #1976d2;
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .info-content {
+            color: #555;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        /* 上传区域 */
+        .upload-section {
+            background: white;
+            margin: 10px 0;
+            padding: 20px 15px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .required {
+            color: #ff5722;
+        }
+
+        /* 证件上传卡片 */
+        .upload-cards {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .upload-card {
+            position: relative;
+            background: #f8f8f8;
+            border: 2px dashed #ddd;
+            border-radius: 10px;
+            padding: 30px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .upload-card:hover {
+            border-color: #4a9b4e;
+            background: #f0f8f0;
+        }
+
+        .upload-card.uploaded {
+            border-style: solid;
+            border-color: #4a9b4e;
+            background: white;
+        }
+
+        .upload-icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 12px;
+            opacity: 0.4;
+        }
+
+        .upload-card.uploaded .upload-icon {
+            display: none;
+        }
+
+        .upload-preview {
+            display: none;
+            width: 100%;
+            height: 120px;
+            background: #e0e0e0;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-card.uploaded .upload-preview {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-size: 12px;
+        }
+
+        .delete-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 24px;
+            height: 24px;
+            background: rgba(0,0,0,0.6);
+            color: white;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .upload-card.uploaded:hover .delete-btn {
+            display: flex;
+        }
+
+        .upload-label {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+
+        .upload-desc {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .upload-card.uploaded .upload-label {
+            color: #4a9b4e;
+            font-weight: 500;
+        }
+
+        .upload-input {
+            display: none;
+        }
+
+        /* 示例图片 */
+        .example-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .example-title {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .example-images {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .example-card {
+            text-align: center;
+        }
+
+        .example-image {
+            width: 100%;
+            height: 100px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .example-label {
+            font-size: 12px;
+            color: #666;
+        }
+
+        /* 注意事项 */
+        .notice-list {
+            background: #fffbf0;
+            border: 1px solid #ffe0b2;
+            border-radius: 6px;
+            padding: 12px 15px;
+            margin-top: 20px;
+        }
+
+        .notice-title {
+            color: #ff9800;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .notice-item {
+            font-size: 12px;
+            color: #666;
+            line-height: 1.8;
+            padding-left: 15px;
+            position: relative;
+        }
+
+        .notice-item::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+        }
+
+        /* 底部提交 */
+        .submit-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            padding: 15px;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #4a9b4e, #6ab56e);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            z-index: 3000;
+            display: none;
+        }
+
+        .toast.show {
+            display: block;
+            animation: fadeInOut 2s ease;
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0; }
+            20%, 80% { opacity: 1; }
+        }
+
+        /* 加载提示 */
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .loading.show {
+            display: flex;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid white;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <div class="top-nav">
+        <div class="back-btn" onclick="goBack()">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+        </div>
+        <div class="page-title">证件上传</div>
+        <div style="width: 24px;"></div>
+    </div>
+
+    <!-- 说明横幅 -->
+    <div class="info-banner">
+        <div class="info-title">
+            <span class="info-icon">i</span>
+            为什么需要上传身份证？
+        </div>
+        <div class="info-content">
+            根据海关规定，跨境购买药品需要进行实名认证。您的身份信息仅用于清关，我们将严格保护您的隐私安全。
+        </div>
+    </div>
+
+    <!-- 上传区域 -->
+    <div class="upload-section">
+        <div class="section-title">
+            上传身份证 <span class="required">*</span>
+        </div>
+
+        <div class="upload-cards">
+            <!-- 正面上传 -->
+            <div class="upload-card" id="frontCard" onclick="document.getElementById('frontInput').click()">
+                <input type="file" id="frontInput" class="upload-input" accept="image/*" onchange="handleUpload('front', this)">
+                <div class="upload-preview" id="frontPreview">身份证正面</div>
+                <div class="delete-btn" onclick="deleteImage(event, 'front')">×</div>
+                <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                    <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                    <polyline points="21 15 16 10 5 21"></polyline>
+                </svg>
+                <div class="upload-label">身份证正面</div>
+                <div class="upload-desc">点击上传</div>
+            </div>
+
+            <!-- 反面上传 -->
+            <div class="upload-card" id="backCard" onclick="document.getElementById('backInput').click()">
+                <input type="file" id="backInput" class="upload-input" accept="image/*" onchange="handleUpload('back', this)">
+                <div class="upload-preview" id="backPreview">身份证反面</div>
+                <div class="delete-btn" onclick="deleteImage(event, 'back')">×</div>
+                <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                    <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                    <polyline points="21 15 16 10 5 21"></polyline>
+                </svg>
+                <div class="upload-label">身份证反面</div>
+                <div class="upload-desc">点击上传</div>
+            </div>
+        </div>
+
+        <!-- 示例图片 -->
+        <div class="example-section">
+            <div class="example-title">拍摄示例</div>
+            <div class="example-images">
+                <div class="example-card">
+                    <img class="example-image" src="assets/images/id/id-front-sample.svg" alt="身份证正面示例">
+                    <div class="example-label">包含照片、姓名、身份证号</div>
+                </div>
+                <div class="example-card">
+                    <img class="example-image" src="assets/images/id/id-back-sample.svg" alt="身份证反面示例">
+                    <div class="example-label">包含国徽、有效期限</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 注意事项 -->
+        <div class="notice-list">
+            <div class="notice-title">拍摄注意事项</div>
+            <div class="notice-item">请确保证件完整、清晰，无反光、无遮挡</div>
+            <div class="notice-item">证件四角需完整露出，不要裁剪</div>
+            <div class="notice-item">请使用原件拍摄，不接受复印件</div>
+            <div class="notice-item">支持jpg、png格式，单张图片不超过5MB</div>
+            <div class="notice-item">您的信息将加密传输，仅用于清关验证</div>
+        </div>
+    </div>
+
+    <!-- 底部提交 -->
+    <div class="submit-bar">
+        <button class="submit-btn" id="submitBtn" onclick="submitID()">提交</button>
+    </div>
+
+    <!-- Toast提示 -->
+    <div class="toast" id="toast"></div>
+
+    <!-- 加载提示 -->
+    <div class="loading" id="loading">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <script>
+        // 全局变量
+        let uploadedFiles = {
+            front: null,
+            back: null
+        };
+
+        // 处理文件上传
+        function handleUpload(side, input) {
+            const file = input.files[0];
+            
+            if (!file) return;
+            
+            // 检查文件类型
+            if (!file.type.match('image.*')) {
+                showToast('请上传图片文件');
+                return;
+            }
+            
+            // 检查文件大小（5MB）
+            if (file.size > 5 * 1024 * 1024) {
+                showToast('图片大小不能超过5MB');
+                return;
+            }
+            
+            // 保存文件
+            uploadedFiles[side] = file;
+            
+            // 更新UI
+            const card = document.getElementById(side + 'Card');
+            card.classList.add('uploaded');
+            
+            // 更新预览（实际应用中会显示真实图片）
+            const preview = document.getElementById(side + 'Preview');
+            preview.style.display = 'flex';
+            
+            // 检查是否可以提交
+            checkSubmitButton();
+            
+            showToast(`${side === 'front' ? '正面' : '反面'}上传成功`);
+        }
+
+        // 删除图片
+        function deleteImage(event, side) {
+            event.stopPropagation();
+            
+            uploadedFiles[side] = null;
+            
+            const card = document.getElementById(side + 'Card');
+            card.classList.remove('uploaded');
+            
+            const preview = document.getElementById(side + 'Preview');
+            preview.style.display = 'none';
+            
+            // 清空input
+            const input = document.getElementById(side + 'Input');
+            input.value = '';
+            
+            checkSubmitButton();
+        }
+
+        // 检查提交按钮状态
+        function checkSubmitButton() {
+            const submitBtn = document.getElementById('submitBtn');
+            
+            if (uploadedFiles.front && uploadedFiles.back) {
+                submitBtn.disabled = false;
+            } else {
+                submitBtn.disabled = true;
+            }
+        }
+
+        // 提交身份证
+        function submitID() {
+            if (!uploadedFiles.front || !uploadedFiles.back) {
+                showToast('请上传身份证正反面');
+                return;
+            }
+            
+            // 显示加载
+            document.getElementById('loading').classList.add('show');
+            
+            // 模拟上传
+            setTimeout(() => {
+                document.getElementById('loading').classList.remove('show');
+                
+                // 保存上传状态
+                localStorage.setItem('idUploaded', 'true');
+                localStorage.setItem('uploadTime', new Date().toISOString());
+                
+                showToast('上传成功');
+                
+                // 延迟返回
+                setTimeout(() => {
+                    window.history.back();
+                }, 1500);
+            }, 2000);
+        }
+
+        // 返回
+        function goBack() {
+            window.history.back();
+        }
+
+        // 显示提示
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            checkSubmitButton();
+        });
+    </script>
+</body>
+</html>

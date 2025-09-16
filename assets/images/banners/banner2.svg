@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="400" viewBox="0 0 1200 400">
+  <defs>
+    <linearGradient id="bg2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fff3e0"/>
+      <stop offset="100%" stop-color="#ffe0b2"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="400" fill="url(#bg2)"/>
+  <g fill="#fb8c00" opacity="0.25">
+    <circle cx="1100" cy="300" r="90"/>
+    <rect x="40" y="40" width="120" height="120" rx="20"/>
+  </g>
+  <g font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif">
+    <text x="80" y="170" font-size="52" fill="#e65100" font-weight="800">处方药合规购药流程</text>
+    <text x="80" y="230" font-size="26" fill="#ef6c00">下单完成后填写健康问卷，药师审核更安心</text>
+  </g>
+</svg>

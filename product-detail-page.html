@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商品详情 - 芝生药局</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background-color: #f8faf8;
+            color: #333;
+            padding-bottom: 60px;
+        }
+
+        /* 顶部导航 */
+        .top-nav {
+            background: white;
+            padding: 12px 15px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .back-btn {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            margin-right: 15px;
+        }
+
+        .page-title {
+            flex: 1;
+            text-align: center;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        /* 商品图片轮播 */
+        .product-gallery {
+            background: white;
+            position: relative;
+            height: 350px;
+            overflow: hidden;
+        }
+
+        .gallery-inner {
+            display: flex;
+            height: 100%;
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item {
+            min-width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #f5f5f5, #e0e0e0);
+            display: block;
+        }
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .gallery-dots {
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+        }
+
+        .gallery-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(0,0,0,0.2);
+            cursor: pointer;
+        }
+
+        .gallery-dot.active {
+            background: #4a9b4e;
+        }
+
+        /* 商品信息 */
+        .product-info {
+            background: white;
+            padding: 15px;
+            margin-top: 10px;
+        }
+
+        .product-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+
+        .product-tags {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .tag {
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .tag.prescription {
+            background: #fff3e0;
+            color: #ff9800;
+            border: 1px solid #ff9800;
+        }
+
+        .tag.authentic {
+            background: #e8f5e9;
+            color: #4a9b4e;
+            border: 1px solid #4a9b4e;
+        }
+
+        .price-section {
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .current-price {
+            color: #ff5722;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .original-price {
+            color: #999;
+            font-size: 14px;
+            text-decoration: line-through;
+        }
+
+        .price-label {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .tax-price {
+            color: #ff9800;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .total-price {
+            color: #4a9b4e;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .stock-section {
+            padding: 12px 0;
+            border-top: 1px solid #f0f0f0;
+            margin-top: 15px;
+        }
+
+        .stock-label {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .stock-count {
+            color: #4a9b4e;
+            font-size: 16px;
+            font-weight: 600;
+            margin-left: 5px;
+        }
+
+
+        /* 数量选择 */
+        .quantity-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .quantity-label {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .quantity-btn {
+            width: 32px;
+            height: 32px;
+            border: 1px solid #ddd;
+            background: white;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .quantity-btn:active {
+            background: #f0f0f0;
+        }
+
+        .quantity-value {
+            min-width: 40px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        /* 合规提示 */
+        .compliance-notice {
+            background: #fff3e0;
+            border: 1px solid #ffcc80;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 15px;
+        }
+
+        .compliance-title {
+            color: #ff9800;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .compliance-content {
+            color: #666;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        /* 详情部分 */
+        .detail-section {
+            background: white;
+            margin-top: 10px;
+            padding: 15px;
+        }
+
+        .detail-tabs {
+            display: flex;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 15px;
+        }
+
+        .detail-tab {
+            flex: 1;
+            padding: 12px 0;
+            text-align: center;
+            cursor: pointer;
+            font-size: 14px;
+            color: #666;
+            position: relative;
+        }
+
+        .detail-tab.active {
+            color: #4a9b4e;
+            font-weight: 600;
+        }
+
+        .detail-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 2px;
+            background: #4a9b4e;
+        }
+
+        .detail-content {
+            font-size: 14px;
+            line-height: 1.8;
+            color: #666;
+        }
+
+        .detail-content h3 {
+            color: #333;
+            margin: 15px 0 10px;
+            font-size: 15px;
+        }
+
+        /* 底部容器 */
+        .bottom-container {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+        }
+
+        .disclaimer-section {
+            padding: 8px 15px;
+            border-bottom: 1px solid #f0f0f0;
+            text-align: center;
+        }
+
+        .disclaimer-link {
+            color: #4a9b4e;
+            font-size: 13px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .disclaimer-link:hover {
+            text-decoration: underline;
+        }
+
+        /* 底部操作栏 */
+        .bottom-bar {
+            display: flex;
+            padding: 10px 15px;
+            gap: 10px;
+        }
+
+        .bottom-action {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 5px 10px;
+            cursor: pointer;
+            color: #666;
+            text-decoration: none;
+        }
+
+        .bottom-icon {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 4px;
+        }
+
+        .bottom-text {
+            font-size: 11px;
+        }
+
+        .bottom-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 20px;
+            font-size: 15px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .add-cart-btn {
+            background: #ffeb3b;
+            color: #333;
+        }
+
+        .buy-now-btn {
+            background: linear-gradient(135deg, #4a9b4e, #6ab56e);
+            color: white;
+        }
+
+        /* 客服图标 */
+        .service-icon {
+            background: currentColor;
+            mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>');
+            -webkit-mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>');
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            z-index: 3000;
+            display: none;
+        }
+
+        .toast.show {
+            display: block;
+            animation: fadeInOut 2s ease;
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0; }
+            20%, 80% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <div class="top-nav">
+        <div class="back-btn" onclick="goBack()">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+        </div>
+        <div class="page-title">商品详情</div>
+        <div style="width: 24px;"></div>
+    </div>
+
+    <!-- 商品图片轮播 -->
+    <div class="product-gallery">
+        <div class="gallery-inner" id="galleryInner">
+            <div class="gallery-item"><img id="galleryImg1" src="assets/images/products/product-otc.svg" alt="商品图1"></div>
+            <div class="gallery-item"><img id="galleryImg2" src="assets/images/products/product-otc.svg" alt="商品图2"></div>
+            <div class="gallery-item"><img id="galleryImg3" src="assets/images/products/product-otc.svg" alt="商品图3"></div>
+        </div>
+        <div class="gallery-dots">
+            <span class="gallery-dot active" onclick="goToImage(0)"></span>
+            <span class="gallery-dot" onclick="goToImage(1)"></span>
+            <span class="gallery-dot" onclick="goToImage(2)"></span>
+        </div>
+    </div>
+
+    <!-- 商品信息 -->
+    <div class="product-info">
+        <h1 class="product-name" id="productName">龙角散清凉糖 日本原装进口</h1>
+        
+        <div class="product-tags">
+            <span class="tag authentic">正品保证</span>
+            <span class="tag prescription" id="prescriptionTag" style="display: none;">处方药</span>
+        </div>
+
+        <div class="price-section">
+            <div style="display: flex; flex-direction: column; gap: 5px;">
+                <div>
+                    <span class="price-label">商品价格：</span>
+                    <span class="current-price" id="currentPrice">¥45</span>
+                    <span class="price-label" style="margin-left: 15px;">税金：</span>
+                    <span class="tax-price" id="taxPrice">¥4.50</span>
+                </div>
+                <div class="total-price-line">
+                    <span class="price-label">含税价：</span>
+                    <span class="total-price" id="totalPrice">¥49.50</span>
+                    <span class="original-price" style="margin-left: 10px;">¥68</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 库存信息 -->
+        <div class="stock-section">
+            <span class="stock-label">库存数量：</span>
+            <span class="stock-count" id="stockCount">256</span>
+        </div>
+
+
+        <!-- 数量选择 -->
+        <div class="quantity-section">
+            <span class="quantity-label">购买数量</span>
+            <div class="quantity-control">
+                <button class="quantity-btn" onclick="updateQuantity(-1)">-</button>
+                <span class="quantity-value" id="quantity">1</span>
+                <button class="quantity-btn" onclick="updateQuantity(1)">+</button>
+            </div>
+        </div>
+
+        <!-- 合规提示（处方药显示） -->
+        <div class="compliance-notice" id="complianceNotice" style="display: none;">
+            <div class="compliance-title">处方药购买提示</div>
+            <div class="compliance-content">
+                本商品为处方药，需在下单后补充健康问卷信息。根据问卷结果，可能需要进行视频问诊（费用另计）。请确保提供真实准确的健康信息。
+            </div>
+        </div>
+    </div>
+
+    <!-- 详情部分 -->
+    <div class="detail-section">
+        <div class="detail-tabs">
+            <div class="detail-tab active" onclick="switchTab(this, 'detail')">商品详情</div>
+            <div class="detail-tab" onclick="switchTab(this, 'params')">规格参数</div>
+            <div class="detail-tab" onclick="switchTab(this, 'notice')">用药须知</div>
+        </div>
+        
+        <div class="detail-content" id="detailContent">
+            <div id="detail">
+                <h3>产品介绍</h3>
+                <p>龙角散清凉糖采用日本传统配方，含有多种草本精华，能够有效缓解咽喉不适、咳嗽等症状。本品为日本原装进口，品质保证。</p>
+                
+                <h3>主要成分</h3>
+                <p>桔梗、甘草、薄荷等天然草本提取物</p>
+                
+                <h3>适用人群</h3>
+                <p>咽喉不适、轻微咳嗽、声音嘶哑的成年人</p>
+            </div>
+            
+            <div id="params" style="display: none;">
+                <h3>基本信息</h3>
+                <p>品牌：龙角散</p>
+                <p>产地：日本</p>
+                <p>保质期：24个月</p>
+                <p>储存方法：阴凉干燥处保存</p>
+                
+                <h3>包装规格</h3>
+                <p>40g/盒、80g/盒、120g/盒</p>
+            </div>
+            
+            <div id="notice" style="display: none;">
+                <h3>用法用量</h3>
+                <p>成人每次1-2粒，每日3-6次，含服</p>
+                
+                <h3>注意事项</h3>
+                <p>1. 请按说明书或在医师指导下使用</p>
+                <p>2. 孕妇、哺乳期妇女慎用</p>
+                <p>3. 对本品过敏者禁用</p>
+                <p>4. 请置于儿童不易触及处</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部操作栏 -->
+    <div class="bottom-container">
+        <!-- 免责声明链接 -->
+        <div class="disclaimer-section">
+            <a href="#" class="disclaimer-link" onclick="showDisclaimer()">查看免责声明</a>
+        </div>
+
+        <div class="bottom-bar">
+            <a href="#" class="bottom-action" onclick="showServiceChat()">
+                <div class="bottom-icon service-icon"></div>
+                <span class="bottom-text">客服</span>
+            </a>
+            <button class="bottom-btn add-cart-btn" onclick="addToCart()">加入购物车</button>
+            <button class="bottom-btn buy-now-btn" onclick="buyNow()">立即购买</button>
+        </div>
+    </div>
+
+    <!-- Toast提示 -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // 全局变量
+        let currentImage = 0;
+        let currentPrice = 45;
+        let quantity = 1;
+        let productData = {
+            id: 1,
+            name: '龙角散清凉糖',
+            isPrescription: false
+        };
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 从URL参数获取商品ID
+            const urlParams = new URLSearchParams(window.location.search);
+            const productId = urlParams.get('id');
+            if (productId) {
+                productData.id = parseInt(productId, 10);
+            }
+            
+            // 根据ID加载不同商品（模拟）
+            if (productId === '3' || productId === '7') {
+                // 处方药
+                productData.isPrescription = true;
+                productData.name = '处方感冒药';
+                document.getElementById('productName').textContent = '处方感冒药 日本进口';
+                document.getElementById('prescriptionTag').style.display = 'inline-block';
+                document.getElementById('complianceNotice').style.display = 'block';
+                document.getElementById('currentPrice').textContent = '¥128';
+                currentPrice = 128;
+            }
+
+            // 设置图片
+            const imgSrc = getProductImage(productData.id);
+            document.getElementById('galleryImg1').src = imgSrc;
+            document.getElementById('galleryImg2').src = imgSrc;
+            document.getElementById('galleryImg3').src = imgSrc;
+        });
+
+        // 获取商品图片（演示占位）
+        function getProductImage(id) {
+            switch (Number(id)) {
+                case 3:
+                case 7:
+                    return 'assets/images/products/product-prescription.svg';
+                case 4:
+                    return 'assets/images/products/product-eye.svg';
+                case 5:
+                    return 'assets/images/products/product-health.svg';
+                case 6:
+                    return 'assets/images/products/product-device.svg';
+                case 8:
+                    return 'assets/images/products/product-beauty.svg';
+                default:
+                    return 'assets/images/products/product-otc.svg';
+            }
+        }
+
+        // 图片轮播
+        function goToImage(index) {
+            currentImage = index;
+            const gallery = document.getElementById('galleryInner');
+            gallery.style.transform = `translateX(-${index * 100}%)`;
+            
+            // 更新点
+            const dots = document.querySelectorAll('.gallery-dot');
+            dots.forEach((dot, i) => {
+                dot.classList.toggle('active', i === index);
+            });
+        }
+
+        // 左右滑动支持
+        let startX = 0;
+        let currentX = 0;
+        const gallery = document.querySelector('.product-gallery');
+
+        gallery.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+        });
+
+        gallery.addEventListener('touchmove', (e) => {
+            currentX = e.touches[0].clientX;
+        });
+
+        gallery.addEventListener('touchend', () => {
+            const diff = startX - currentX;
+            if (Math.abs(diff) > 50) {
+                if (diff > 0 && currentImage < 2) {
+                    goToImage(currentImage + 1);
+                } else if (diff < 0 && currentImage > 0) {
+                    goToImage(currentImage - 1);
+                }
+            }
+        });
+
+
+        // 更新数量
+        function updateQuantity(change) {
+            quantity = Math.max(1, quantity + change);
+            document.getElementById('quantity').textContent = quantity;
+        }
+
+        // 切换详情标签
+        function switchTab(element, tabName) {
+            // 更新标签状态
+            document.querySelectorAll('.detail-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            element.classList.add('active');
+            
+            // 显示对应内容
+            document.querySelectorAll('#detailContent > div').forEach(content => {
+                content.style.display = 'none';
+            });
+            document.getElementById(tabName).style.display = 'block';
+        }
+
+        // 添加到购物车
+        function addToCart() {
+            // 获取已有购物车数据
+            let cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+            
+            // 查找是否已存在
+            const existingItem = cartItems.find(item => item.id === productData.id);
+            
+            if (existingItem) {
+                existingItem.quantity += quantity;
+            } else {
+                cartItems.push({
+                    id: productData.id,
+                    name: productData.name,
+                    price: currentPrice,
+                    quantity: quantity,
+                    checked: true,
+                    isPrescription: productData.isPrescription
+                });
+            }
+            
+            // 保存到localStorage
+            localStorage.setItem('cartItems', JSON.stringify(cartItems));
+            
+            // 显示提示
+            showToast('已加入购物车');
+        }
+
+        // 立即购买
+        function buyNow() {
+            // 创建临时订单数据
+            const orderItem = {
+                id: productData.id,
+                name: productData.name,
+                price: currentPrice,
+                quantity: quantity,
+                isPrescription: productData.isPrescription
+            };
+            
+            localStorage.setItem('checkoutItems', JSON.stringify([orderItem]));
+            window.location.href = 'checkout-page.html';
+        }
+
+        // 显示客服
+        function showServiceChat() {
+            showToast('客服功能开发中');
+        }
+
+        // 返回
+        function goBack() {
+            window.history.back();
+        }
+
+        // 显示提示
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+
+        // 显示免责声明
+        function showDisclaimer() {
+            alert('免责声明：\n\n1. 本网站所售商品均为正品，但请在专业医师指导下使用。\n2. 处方药需提供有效处方，并可能产生额外的医疗咨询费用。\n3. 请仔细阅读商品说明书，如有不良反应请及时就医。\n4. 本网站不承担因使用商品而产生的任何直接或间接损失。\n5. 如有疑问，请咨询专业医师或联系客服。');
+        }
+    </script>
+</body>
+</html>

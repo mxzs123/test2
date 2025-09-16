@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的优惠券 - 芝生药局</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background-color: #f8faf8;
+            color: #333;
+        }
+
+        /* 顶部导航 */
+        .top-nav {
+            background: white;
+            padding: 12px 15px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .back-btn {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            margin-right: 15px;
+        }
+
+        .page-title {
+            flex: 1;
+            text-align: center;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        /* 优惠券Tab */
+        .coupon-tabs {
+            background: white;
+            display: flex;
+            border-bottom: 1px solid #eee;
+            position: sticky;
+            top: 56px;
+            z-index: 99;
+        }
+
+        .tab-item {
+            flex: 1;
+            padding: 14px 0;
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .tab-item.active {
+            color: #4a9b4e;
+            font-weight: 500;
+        }
+
+        .tab-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 2px;
+            background: #4a9b4e;
+        }
+
+        /* 优惠券列表 */
+        .coupon-list {
+            padding: 10px;
+        }
+
+        .coupon-card {
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            position: relative;
+        }
+
+        .coupon-card.expired {
+            opacity: 0.6;
+        }
+
+        .coupon-body {
+            display: flex;
+            padding: 15px;
+        }
+
+        .coupon-amount {
+            width: 80px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #4a9b4e, #6ab56e);
+            color: white;
+            border-radius: 6px;
+            margin-right: 15px;
+            position: relative;
+        }
+
+        .coupon-amount::after {
+            content: '';
+            position: absolute;
+            right: -8px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-left: 8px solid #6ab56e;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+        }
+
+        .amount-value {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .amount-unit {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .coupon-info {
+            flex: 1;
+            padding-right: 15px;
+        }
+
+        .coupon-title {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .coupon-condition {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .coupon-expire {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .coupon-status {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .status-available {
+            background: #e8f5e9;
+            color: #4a9b4e;
+        }
+
+        .status-used {
+            background: #f5f5f5;
+            color: #999;
+        }
+
+        .status-expired {
+            background: #ffebee;
+            color: #f44336;
+        }
+
+        /* 空状态 */
+        .empty-state {
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        .empty-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background: #f0f0f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ccc;
+            font-size: 36px;
+        }
+
+        .empty-text {
+            color: #999;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .empty-btn {
+            padding: 10px 30px;
+            background: linear-gradient(135deg, #4a9b4e, #6ab56e);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        /* 底部导航 */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+            z-index: 1000;
+        }
+
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #666;
+            padding: 5px;
+            cursor: pointer;
+        }
+
+        .nav-item.active {
+            color: #4a9b4e;
+        }
+
+        .nav-icon {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 4px;
+            background: currentColor;
+            mask-size: contain;
+            -webkit-mask-size: contain;
+        }
+
+        .nav-icon.home {
+            mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>');
+            -webkit-mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>');
+        }
+
+        .nav-icon.products {
+            mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>');
+            -webkit-mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>');
+        }
+
+        .nav-icon.cart {
+            mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>');
+            -webkit-mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>');
+        }
+
+        .nav-icon.account {
+            mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>');
+            -webkit-mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>');
+        }
+
+        .nav-text {
+            font-size: 11px;
+        }
+
+        .coupon-card.expired .coupon-amount {
+            background: linear-gradient(135deg, #999, #bbb);
+        }
+
+        .coupon-card.expired .coupon-amount::after {
+            border-left-color: #bbb;
+        }
+        /* Material Symbols样式 */
+        .material-symbols-outlined {
+            font-size: 20px;
+            vertical-align: middle;
+            margin-right: 4px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <div class="top-nav">
+        <div class="back-btn" onclick="goBack()">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+        </div>
+        <div class="page-title">我的优惠券</div>
+        <div style="width: 24px;"></div>
+    </div>
+
+    <!-- 优惠券Tab -->
+    <div class="coupon-tabs">
+        <div class="tab-item active" onclick="switchTab(this, 'all')">全部</div>
+        <div class="tab-item" onclick="switchTab(this, 'available')">可用</div>
+        <div class="tab-item" onclick="switchTab(this, 'used')">已使用</div>
+        <div class="tab-item" onclick="switchTab(this, 'expired')">过期</div>
+    </div>
+
+    <!-- 优惠券列表 -->
+    <div class="coupon-list" id="couponList">
+        <!-- 可用优惠券 -->
+        <div class="coupon-card available-coupon">
+            <div class="coupon-body">
+                <div class="coupon-amount">
+                    <div class="amount-value">20</div>
+                    <div class="amount-unit">元</div>
+                </div>
+                <div class="coupon-info">
+                    <div class="coupon-title">新用户专享券</div>
+                    <div class="coupon-condition">满100元可用</div>
+                    <div class="coupon-expire">有效期至：2025-02-28</div>
+                </div>
+            </div>
+            <div class="coupon-status status-available">可用</div>
+        </div>
+
+        <div class="coupon-card available-coupon">
+            <div class="coupon-body">
+                <div class="coupon-amount">
+                    <div class="amount-value">50</div>
+                    <div class="amount-unit">元</div>
+                </div>
+                <div class="coupon-info">
+                    <div class="coupon-title">药品专用券</div>
+                    <div class="coupon-condition">满300元可用</div>
+                    <div class="coupon-expire">有效期至：2025-03-15</div>
+                </div>
+            </div>
+            <div class="coupon-status status-available">可用</div>
+        </div>
+
+        <div class="coupon-card available-coupon">
+            <div class="coupon-body">
+                <div class="coupon-amount">
+                    <div class="amount-value">10</div>
+                    <div class="amount-unit">元</div>
+                </div>
+                <div class="coupon-info">
+                    <div class="coupon-title">周年庆优惠券</div>
+                    <div class="coupon-condition">满60元可用</div>
+                    <div class="coupon-expire">有效期至：2025-04-01</div>
+                </div>
+            </div>
+            <div class="coupon-status status-available">可用</div>
+        </div>
+
+        <div class="coupon-card available-coupon">
+            <div class="coupon-body">
+                <div class="coupon-amount">
+                    <div class="amount-value">30</div>
+                    <div class="amount-unit">元</div>
+                </div>
+                <div class="coupon-info">
+                    <div class="coupon-title">健康保健券</div>
+                    <div class="coupon-condition">满200元可用</div>
+                    <div class="coupon-expire">有效期至：2025-03-31</div>
+                </div>
+            </div>
+            <div class="coupon-status status-available">可用</div>
+        </div>
+
+        <!-- 已使用优惠券 -->
+        <div class="coupon-card used-coupon" style="display: none;">
+            <div class="coupon-body">
+                <div class="coupon-amount">
+                    <div class="amount-value">15</div>
+                    <div class="amount-unit">元</div>
+                </div>
+                <div class="coupon-info">
+                    <div class="coupon-title">普通优惠券</div>
+                    <div class="coupon-condition">满80元可用</div>
+                    <div class="coupon-expire">使用时间：2025-01-10</div>
+                </div>
+            </div>
+            <div class="coupon-status status-used">已使用</div>
+        </div>
+
+        <div class="coupon-card used-coupon" style="display: none;">
+            <div class="coupon-body">
+                <div class="coupon-amount">
+                    <div class="amount-value">25</div>
+                    <div class="amount-unit">元</div>
+                </div>
+                <div class="coupon-info">
+                    <div class="coupon-title">满减优惠券</div>
+                    <div class="coupon-condition">满150元可用</div>
+                    <div class="coupon-expire">使用时间：2024-12-25</div>
+                </div>
+            </div>
+            <div class="coupon-status status-used">已使用</div>
+        </div>
+
+        <div class="coupon-card used-coupon" style="display: none;">
+            <div class="coupon-body">
+                <div class="coupon-amount">
+                    <div class="amount-value">8</div>
+                    <div class="amount-unit">元</div>
+                </div>
+                <div class="coupon-info">
+                    <div class="coupon-title">小额券</div>
+                    <div class="coupon-condition">满50元可用</div>
+                    <div class="coupon-expire">使用时间：2025-01-05</div>
+                </div>
+            </div>
+            <div class="coupon-status status-used">已使用</div>
+        </div>
+
+        <!-- 过期优惠券 -->
+        <div class="coupon-card expired expired-coupon" style="display: none;">
+            <div class="coupon-body">
+                <div class="coupon-amount">
+                    <div class="amount-value">100</div>
+                    <div class="amount-unit">元</div>
+                </div>
+                <div class="coupon-info">
+                    <div class="coupon-title">大额优惠券</div>
+                    <div class="coupon-condition">满500元可用</div>
+                    <div class="coupon-expire">过期时间：2024-12-31</div>
+                </div>
+            </div>
+            <div class="coupon-status status-expired">已过期</div>
+        </div>
+
+        <div class="coupon-card expired expired-coupon" style="display: none;">
+            <div class="coupon-body">
+                <div class="coupon-amount">
+                    <div class="amount-value">40</div>
+                    <div class="amount-unit">元</div>
+                </div>
+                <div class="coupon-info">
+                    <div class="coupon-title">限时券</div>
+                    <div class="coupon-condition">满200元可用</div>
+                    <div class="coupon-expire">过期时间：2024-11-30</div>
+                </div>
+            </div>
+            <div class="coupon-status status-expired">已过期</div>
+        </div>
+
+        <div class="coupon-card expired expired-coupon" style="display: none;">
+            <div class="coupon-body">
+                <div class="coupon-amount">
+                    <div class="amount-value">12</div>
+                    <div class="amount-unit">元</div>
+                </div>
+                <div class="coupon-info">
+                    <div class="coupon-title">试用券</div>
+                    <div class="coupon-condition">满60元可用</div>
+                    <div class="coupon-expire">过期时间：2024-10-15</div>
+                </div>
+            </div>
+            <div class="coupon-status status-expired">已过期</div>
+        </div>
+    </div>
+
+    <!-- 空状态（初始隐藏） -->
+    <div class="empty-state" id="emptyState" style="display: none;">
+        <div class="empty-icon">券</div>
+        <div class="empty-text">暂无优惠券</div>
+        <button class="empty-btn" onclick="goShopping()">去购物</button>
+    </div>
+
+    <!-- 底部导航 -->
+    <div class="bottom-nav">
+        <div class="nav-item" onclick="goHome()">
+            <div class="nav-icon home"></div>
+            <span class="nav-text">首页</span>
+        </div>
+        <div class="nav-item" onclick="goProducts()">
+            <div class="nav-icon products"></div>
+            <span class="nav-text">商品</span>
+        </div>
+        <div class="nav-item" onclick="goCart()">
+            <div class="nav-icon cart"></div>
+            <span class="nav-text">购物车</span>
+        </div>
+        <div class="nav-item active" onclick="goAccount()">
+            <div class="nav-icon account"></div>
+            <span class="nav-text">我的</span>
+        </div>
+    </div>
+
+    <script>
+        // 切换Tab
+        function switchTab(element, status) {
+            // 更新Tab状态
+            document.querySelectorAll('.tab-item').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            element.classList.add('active');
+
+            // 隐藏所有优惠券
+            document.querySelectorAll('.coupon-card').forEach(card => {
+                card.style.display = 'none';
+            });
+
+            // 根据状态显示对应优惠券
+            let hasCards = false;
+            switch(status) {
+                case 'all':
+                    document.querySelectorAll('.coupon-card').forEach(card => {
+                        card.style.display = 'block';
+                        hasCards = true;
+                    });
+                    break;
+                case 'available':
+                    document.querySelectorAll('.available-coupon').forEach(card => {
+                        card.style.display = 'block';
+                        hasCards = true;
+                    });
+                    break;
+                case 'used':
+                    document.querySelectorAll('.used-coupon').forEach(card => {
+                        card.style.display = 'block';
+                        hasCards = true;
+                    });
+                    break;
+                case 'expired':
+                    document.querySelectorAll('.expired-coupon').forEach(card => {
+                        card.style.display = 'block';
+                        hasCards = true;
+                    });
+                    break;
+            }
+
+            // 显示/隐藏空状态
+            const emptyState = document.getElementById('emptyState');
+            if (hasCards) {
+                emptyState.style.display = 'none';
+            } else {
+                emptyState.style.display = 'block';
+            }
+        }
+
+        // 去购物
+        function goShopping() {
+            window.location.href = 'index.html';
+        }
+
+        // 返回
+        function goBack() {
+            window.history.back();
+        }
+
+        // 导航函数
+        function goHome() {
+            window.location.href = 'index.html';
+        }
+
+        function goProducts() {
+            window.location.href = 'zhisheng-pharmacy-prototype.html';
+        }
+
+        function goCart() {
+            window.location.href = 'zhisheng-pharmacy-prototype.html';
+        }
+
+        function goAccount() {
+            window.location.href = 'zhisheng-pharmacy-prototype.html';
+        }
+    </script>
+</body>
+</html>

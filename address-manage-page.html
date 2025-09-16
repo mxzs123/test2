@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>收货地址管理 - 芝生药局</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background-color: #f8faf8;
+            color: #333;
+            padding-bottom: 80px;
+        }
+
+        /* 顶部导航 */
+        .top-nav {
+            background: white;
+            padding: 12px 15px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .back-btn {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            margin-right: 15px;
+        }
+
+        .page-title {
+            flex: 1;
+            text-align: center;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .add-btn {
+            color: #4a9b4e;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        /* 地址列表 */
+        .address-list {
+            padding: 15px;
+        }
+
+        .address-item {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            position: relative;
+        }
+
+        .address-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .address-info {
+            flex: 1;
+        }
+
+        .recipient-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .recipient-name {
+            font-size: 16px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .recipient-phone {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .address-detail {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+
+        .address-tags {
+            display: flex;
+            gap: 8px;
+        }
+
+        .address-tag {
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            display: inline-block;
+        }
+
+        .tag-default {
+            background: #4a9b4e;
+            color: white;
+        }
+
+        .tag-home {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .tag-company {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        /* 操作按钮 */
+        .address-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            border: 1px solid #e0e0e0;
+            background: white;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-edit {
+            color: #4a9b4e;
+            border-color: #4a9b4e;
+        }
+
+        .btn-delete {
+            color: #ff5722;
+            border-color: #ff5722;
+        }
+
+        .btn-set-default {
+            color: #666;
+        }
+
+        .action-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* 新增地址按钮 */
+        .add-address-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 15px;
+            right: 15px;
+            padding: 14px;
+            background: #4a9b4e;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(74, 155, 78, 0.3);
+        }
+
+        .add-address-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* 空状态 */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background: #f0f0f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-size: 32px;
+        }
+
+        .empty-text {
+            color: #999;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            z-index: 3000;
+            display: none;
+        }
+
+        .toast.show {
+            display: block;
+            animation: fadeInOut 2s ease;
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0; }
+            20%, 80% { opacity: 1; }
+        }
+
+        /* 确认对话框 */
+        .confirm-dialog {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .confirm-dialog.show {
+            display: flex;
+        }
+
+        .dialog-content {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px;
+            max-width: 320px;
+            width: 100%;
+        }
+
+        .dialog-title {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        .dialog-message {
+            color: #666;
+            font-size: 14px;
+            text-align: center;
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        .dialog-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .dialog-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .btn-cancel {
+            background: #f0f0f0;
+            color: #666;
+        }
+
+        .btn-confirm {
+            background: #ff5722;
+            color: white;
+        }
+        /* Material Symbols样式 */
+        .material-symbols-outlined {
+            font-size: 20px;
+            vertical-align: middle;
+            margin-right: 4px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <div class="top-nav">
+        <div class="back-btn" onclick="goBack()">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+        </div>
+        <div class="page-title">收货地址</div>
+        <div class="add-btn" onclick="addNewAddress()">新增</div>
+    </div>
+
+    <!-- 地址列表 -->
+    <div class="address-list" id="addressList">
+        <!-- 地址项将通过JavaScript动态生成 -->
+    </div>
+
+    <!-- 新增地址按钮 -->
+    <button class="add-address-btn" onclick="addNewAddress()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M12 8v8M8 12h8"></path>
+        </svg>
+        <span>新增收货地址</span>
+    </button>
+
+    <!-- 确认对话框 -->
+    <div class="confirm-dialog" id="confirmDialog">
+        <div class="dialog-content">
+            <div class="dialog-title" id="dialogTitle">确认删除</div>
+            <div class="dialog-message" id="dialogMessage">确定要删除这个地址吗？删除后无法恢复。</div>
+            <div class="dialog-buttons">
+                <button class="dialog-btn btn-cancel" onclick="hideConfirmDialog()">取消</button>
+                <button class="dialog-btn btn-confirm" onclick="confirmAction()">确定</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast提示 -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // 模拟地址数据
+        let addresses = [
+            {
+                id: 1,
+                name: '张三',
+                phone: '138****8888',
+                address: '北京市朝阳区建国路88号SOHO现代城A座2801室',
+                isDefault: true,
+                tag: 'home'
+            },
+            {
+                id: 2,
+                name: '李四',
+                phone: '139****9999',
+                address: '上海市浦东新区陆家嘴金融中心大厦1208室',
+                isDefault: false,
+                tag: 'company'
+            },
+            {
+                id: 3,
+                name: '王五',
+                phone: '136****6666',
+                address: '广州市天河区珠江新城CBD核心区写字楼3501',
+                isDefault: false,
+                tag: null
+            },
+            {
+                id: 4,
+                name: '赵六',
+                phone: '135****5555',
+                address: '深圳市南山区科技园南区科苑路1001号大厦15楼',
+                isDefault: false,
+                tag: 'company'
+            }
+        ];
+
+        let currentAction = null;
+        let currentAddressId = null;
+
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', function() {
+            renderAddressList();
+        });
+
+        // 渲染地址列表
+        function renderAddressList() {
+            const container = document.getElementById('addressList');
+
+            if (addresses.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon"><span class="material-symbols-outlined">location_on</span></div>
+                        <div class="empty-text">还没有收货地址</div>
+                        <div class="empty-text">添加地址后可快速选择收货信息</div>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = addresses.map(addr => `
+                <div class="address-item" data-id="${addr.id}">
+                    <div class="address-header">
+                        <div class="address-info">
+                            <div class="recipient-info">
+                                <span class="recipient-name">${addr.name}</span>
+                                <span class="recipient-phone">${addr.phone}</span>
+                            </div>
+                            <div class="address-detail">${addr.address}</div>
+                            <div class="address-tags">
+                                ${addr.isDefault ? '<span class="address-tag tag-default">默认</span>' : ''}
+                                ${addr.tag === 'home' ? '<span class="address-tag tag-home">家</span>' : ''}
+                                ${addr.tag === 'company' ? '<span class="address-tag tag-company">公司</span>' : ''}
+                            </div>
+                        </div>
+                        <div class="address-actions">
+                            <button class="action-btn btn-edit" onclick="editAddress(${addr.id})">编辑</button>
+                            ${!addr.isDefault ? `<button class="action-btn btn-set-default" onclick="setDefaultAddress(${addr.id})">设为默认</button>` : ''}
+                            <button class="action-btn btn-delete" onclick="deleteAddress(${addr.id})">删除</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 新增地址
+        function addNewAddress() {
+            showToast('新增地址功能开发中，敬请期待');
+            // 实际项目中这里会跳转到地址编辑页面
+            // window.location.href = 'address-edit-page.html';
+        }
+
+        // 编辑地址
+        function editAddress(id) {
+            const address = addresses.find(addr => addr.id === id);
+            if (address) {
+                showToast(`编辑地址功能开发中\n${address.name} - ${address.address.slice(0, 20)}...`);
+                // 实际项目中这里会跳转到地址编辑页面，并传递地址ID
+                // window.location.href = `address-edit-page.html?id=${id}`;
+            }
+        }
+
+        // 设置默认地址
+        function setDefaultAddress(id) {
+            currentAction = 'setDefault';
+            currentAddressId = id;
+
+            const address = addresses.find(addr => addr.id === id);
+            if (address) {
+                document.getElementById('dialogTitle').textContent = '设置默认地址';
+                document.getElementById('dialogMessage').textContent =
+                    `确定将"${address.name} - ${address.address.slice(0, 30)}..."设为默认地址吗？`;
+                showConfirmDialog();
+            }
+        }
+
+        // 删除地址
+        function deleteAddress(id) {
+            currentAction = 'delete';
+            currentAddressId = id;
+
+            const address = addresses.find(addr => addr.id === id);
+            if (address) {
+                if (address.isDefault) {
+                    showToast('默认地址无法删除，请先设置其他地址为默认');
+                    return;
+                }
+
+                document.getElementById('dialogTitle').textContent = '确认删除';
+                document.getElementById('dialogMessage').textContent =
+                    `确定要删除"${address.name}"的收货地址吗？删除后无法恢复。`;
+                showConfirmDialog();
+            }
+        }
+
+        // 显示确认对话框
+        function showConfirmDialog() {
+            document.getElementById('confirmDialog').classList.add('show');
+        }
+
+        // 隐藏确认对话框
+        function hideConfirmDialog() {
+            document.getElementById('confirmDialog').classList.remove('show');
+            currentAction = null;
+            currentAddressId = null;
+        }
+
+        // 确认操作
+        function confirmAction() {
+            if (currentAction === 'delete' && currentAddressId) {
+                // 删除地址
+                addresses = addresses.filter(addr => addr.id !== currentAddressId);
+                renderAddressList();
+                showToast('地址删除成功');
+            } else if (currentAction === 'setDefault' && currentAddressId) {
+                // 设置默认地址
+                addresses.forEach(addr => {
+                    addr.isDefault = (addr.id === currentAddressId);
+                });
+                renderAddressList();
+                showToast('默认地址设置成功');
+            }
+
+            hideConfirmDialog();
+        }
+
+        // 返回上一页
+        function goBack() {
+            window.history.back();
+        }
+
+        // 显示提示
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.innerHTML = message.replace(/\n/g, '<br>');
+            toast.classList.add('show');
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+
+        // 点击对话框外部关闭
+        document.getElementById('confirmDialog').addEventListener('click', function(e) {
+            if (e.target === this) {
+                hideConfirmDialog();
+            }
+        });
+    </script>
+</body>
+</html>

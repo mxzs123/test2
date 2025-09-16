@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>公司信息 - 芝生药局</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <style>
+        /* 全局样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background-color: #f8faf8;
+            color: #333;
+            padding-bottom: 60px;
+            min-height: 100vh;
+        }
+
+        /* 头部导航 */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+            height: 50px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            z-index: 100;
+        }
+
+        .back-btn {
+            cursor: pointer;
+            margin-right: 15px;
+            font-size: 20px;
+            color: #333;
+        }
+
+        .header-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            flex: 1;
+        }
+
+        /* 内容区域 */
+        .content {
+            margin-top: 50px;
+            padding: 0;
+        }
+
+        /* 公司介绍部分 */
+        .company-intro {
+            background: white;
+            margin-bottom: 10px;
+            padding: 20px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+            position: relative;
+            padding-left: 15px;
+        }
+
+        .section-title::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 20px;
+            background: linear-gradient(135deg, #4a9b4e, #6ab56e);
+            border-radius: 2px;
+        }
+
+        .intro-text {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .intro-highlight {
+            background: linear-gradient(135deg, #e8f5e9, #f1f8e9);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #4a9b4e;
+        }
+
+        .intro-highlight h4 {
+            color: #4a9b4e;
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .intro-highlight p {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        /* 店铺网点部分 */
+        .store-locations {
+            background: white;
+            margin-bottom: 10px;
+            padding: 20px;
+        }
+
+        .store-item {
+            border: 1px solid #f0f0f0;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            transition: transform 0.2s;
+        }
+
+        .store-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .store-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .store-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .store-address {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .store-address {
+            position: relative;
+            padding-left: 24px;
+        }
+        .store-address::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 1px;
+            font-family: 'Material Symbols Outlined';
+            font-size: 18px;
+            color: #666;
+        }
+        .store-address .material-symbols-outlined {
+            position: absolute;
+            left: 0;
+            top: 1px;
+            font-size: 18px;
+            color: #666;
+        }
+
+        .store-contact {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+        }
+
+        .store-contact {
+            position: relative;
+            padding-left: 24px;
+        }
+        .store-contact .material-symbols-outlined {
+            position: absolute;
+            left: 0;
+            top: 0;
+            font-size: 18px;
+            color: #666;
+        }
+
+        .store-hours {
+            font-size: 14px;
+            color: #4a9b4e;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+        }
+
+        .store-hours {
+            position: relative;
+            padding-left: 24px;
+        }
+        .store-hours .material-symbols-outlined {
+            position: absolute;
+            left: 0;
+            top: 0;
+            font-size: 18px;
+            color: #4a9b4e;
+        }
+
+        .store-transport {
+            font-size: 14px;
+            color: #666;
+            display: flex;
+            align-items: center;
+        }
+
+        .store-transport {
+            position: relative;
+            padding-left: 24px;
+        }
+        .store-transport .material-symbols-outlined {
+            position: absolute;
+            left: 0;
+            top: 0;
+            font-size: 18px;
+            color: #666;
+        }
+
+        /* FAQ部分 */
+        .faq-section {
+            background: white;
+            padding: 20px;
+        }
+
+        .faq-item {
+            border-bottom: 1px solid #f0f0f0;
+            padding: 15px 0;
+        }
+
+        .faq-item:last-child {
+            border-bottom: none;
+        }
+
+        .faq-question {
+            font-size: 15px;
+            font-weight: 600;
+            color: #333;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 5px 0;
+        }
+
+        .faq-question::before {
+            content: 'Q: ';
+            color: #4a9b4e;
+            font-weight: 700;
+            margin-right: 8px;
+        }
+
+        .faq-question::after {
+            content: '⌄';
+            color: #999;
+            font-size: 18px;
+            transition: transform 0.3s;
+        }
+
+        .faq-question.active::after {
+            transform: rotate(180deg);
+        }
+
+        .faq-answer {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #666;
+            margin-top: 10px;
+            padding-left: 25px;
+            display: none;
+        }
+
+        .faq-answer.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .faq-answer::before {
+            content: 'A: ';
+            color: #4a9b4e;
+            font-weight: 600;
+            margin-left: -25px;
+            margin-right: 8px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 联系信息 */
+        .contact-info {
+            background: linear-gradient(135deg, #4a9b4e, #6ab56e);
+            color: white;
+            padding: 20px;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .contact-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .contact-item::before {
+            margin-right: 8px;
+            font-size: 18px;
+        }
+
+        .contact-phone {
+            position: relative;
+            padding-left: 24px;
+        }
+        .contact-phone .material-symbols-outlined {
+            position: absolute;
+            left: 0;
+            top: 0;
+            font-size: 18px;
+        }
+
+        .contact-email {
+            position: relative;
+            padding-left: 24px;
+        }
+        .contact-email .material-symbols-outlined {
+            position: absolute;
+            left: 0;
+            top: 0;
+            font-size: 18px;
+        }
+
+        .contact-time {
+            position: relative;
+            padding-left: 24px;
+        }
+        .contact-time .material-symbols-outlined {
+            position: absolute;
+            left: 0;
+            top: 0;
+            font-size: 18px;
+        }
+
+        /* 底部导航栏 */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+            z-index: 1000;
+        }
+
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #666;
+            padding: 5px;
+            cursor: pointer;
+        }
+
+        .nav-item.active {
+            color: #4a9b4e;
+        }
+
+        .nav-icon {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 4px;
+            background: currentColor;
+            mask-size: contain;
+            -webkit-mask-size: contain;
+        }
+
+        .nav-icon.home {
+            mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>');
+            -webkit-mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>');
+        }
+
+        .nav-icon.products {
+            mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>');
+            -webkit-mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>');
+        }
+
+        .nav-icon.cart {
+            mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>');
+            -webkit-mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>');
+        }
+
+        .nav-icon.account {
+            mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>');
+            -webkit-mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>');
+        }
+
+        .nav-text {
+            font-size: 11px;
+        }
+
+        /* Material Symbols样式 */
+        .material-symbols-outlined {
+            font-size: 20px;
+            vertical-align: middle;
+            margin-right: 4px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 头部导航 -->
+    <div class="header">
+        <span class="back-btn" onclick="goBack()">‹</span>
+        <div class="header-title">关于芝生药局</div>
+    </div>
+
+    <!-- 内容区域 -->
+    <div class="content">
+        <!-- 公司介绍 -->
+        <section class="company-intro">
+            <h2 class="section-title">公司介绍</h2>
+            <p class="intro-text">
+                芝生药局成立于2018年，是一家专注于为华人用户提供正品日本医药健康产品的跨境电商平台。我们致力于打造最专业、最可信赖的海外购药服务，让优质的日本医药产品惠及更多有需要的用户。
+            </p>
+            <p class="intro-text">
+                作为一家专业的跨境医药电商，我们与日本多家知名药局及医药生产企业建立了长期稳定的合作关系，所有商品均通过正规渠道采购，确保100%正品保障。同时，我们拥有专业的医药团队，为用户提供专业的用药咨询和健康指导服务。
+            </p>
+            <div class="intro-highlight">
+                <h4>我们的使命</h4>
+                <p>让每个人都能便捷地获取到安全、有效、优质的医药健康产品，成为连接日本优质医药资源与华人用户需求的桥梁。</p>
+            </div>
+        </section>
+
+        <!-- 店铺网点 -->
+        <section class="store-locations">
+            <h2 class="section-title">店铺网点</h2>
+
+            <div class="store-item">
+                <div class="store-name">東京銀座店</div>
+                <div class="store-address"><span class="material-symbols-outlined">location_on</span>〒104-0061 東京都中央区銀座4-2-15 塚本ビル6F</div>
+                <div class="store-contact"><span class="material-symbols-outlined">phone</span>电话：03-3561-8888</div>
+                <div class="store-hours"><span class="material-symbols-outlined">schedule</span>营业时间：周一至周日 10:00-20:00</div>
+                <div class="store-transport"><span class="material-symbols-outlined">subway</span>交通：東京メトロ銀座線「銀座」駅A10出口徒歩2分</div>
+            </div>
+        </section>
+
+        <!-- 常见问题FAQ -->
+        <section class="faq-section">
+            <h2 class="section-title">常见问题</h2>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    如何确保商品的正品保障？
+                </div>
+                <div class="faq-answer">
+                    我们所有商品均从日本正规渠道采购，与知名药局及制药企业直接合作。每件商品都有完整的采购记录和质量检测报告，支持官方防伪验证。我们承诺：如发现任何假货，10倍赔偿。
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    处方药如何购买？需要什么手续？
+                </div>
+                <div class="faq-answer">
+                    购买处方药需要完成实名认证并提供相关医疗证明。我们提供在线问诊服务，由持证医师为您开具处方。整个流程严格遵守中日两国相关法律法规，确保用药安全。
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    商品的配送时间和物流跟踪如何？
+                </div>
+                <div class="faq-answer">
+                    日本直邮商品通常3-7个工作日送达，国内现货商品1-3个工作日送达。所有订单都提供实时物流跟踪，您可以通过订单页面或物流公司官网查询配送进度。
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    如果收到商品有质量问题怎么办？
+                </div>
+                <div class="faq-answer">
+                    我们提供7天无理由退换货服务（处方药除外）。如商品存在质量问题，请在收货后48小时内联系客服，我们将安排免费退换货并承担相关费用。您的满意是我们的承诺。
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    支持哪些支付方式？是否安全？
+                </div>
+                <div class="faq-answer">
+                    我们支持支付宝、微信支付、银联卡、信用卡等多种支付方式。所有支付环节均采用银行级别的安全加密技术，绝不存储您的支付密码，确保资金安全。
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    客服服务时间是什么时候？
+                </div>
+                <div class="faq-answer">
+                    我们提供7×14小时专业客服服务，服务时间为周一至周日 9:00-23:00。您可以通过在线客服、电话热线或邮箱联系我们，我们承诺30秒内响应，专业解答您的问题。
+                </div>
+            </div>
+        </section>
+
+        <!-- 联系信息 -->
+        <section class="contact-info">
+            <div class="contact-item contact-phone"><span class="material-symbols-outlined">phone</span>客服热线：400-888-8888</div>
+            <div class="contact-item contact-email"><span class="material-symbols-outlined">email</span>邮箱：service@zhisheng-pharmacy.com</div>
+            <div class="contact-item contact-time"><span class="material-symbols-outlined">schedule</span>服务时间：周一至周日 9:00-23:00</div>
+        </section>
+    </div>
+
+    <!-- 底部导航 -->
+    <div class="bottom-nav">
+        <div class="nav-item" onclick="goToHome()">
+            <div class="nav-icon home"></div>
+            <span class="nav-text">首页</span>
+        </div>
+        <div class="nav-item" onclick="goToProducts()">
+            <div class="nav-icon products"></div>
+            <span class="nav-text">商品</span>
+        </div>
+        <div class="nav-item" onclick="goToCart()">
+            <div class="nav-icon cart"></div>
+            <span class="nav-text">购物车</span>
+        </div>
+        <div class="nav-item" onclick="goToAccount()">
+            <div class="nav-icon account"></div>
+            <span class="nav-text">我的</span>
+        </div>
+    </div>
+
+    <script>
+        // 切换FAQ展开/收起
+        function toggleFaq(element) {
+            const answer = element.nextElementSibling;
+            const isActive = element.classList.contains('active');
+
+            // 首先关闭所有其他FAQ
+            document.querySelectorAll('.faq-question').forEach(q => {
+                q.classList.remove('active');
+                q.nextElementSibling.classList.remove('show');
+            });
+
+            // 如果当前FAQ不是激活状态，则展开它
+            if (!isActive) {
+                element.classList.add('active');
+                answer.classList.add('show');
+            }
+        }
+
+        // 导航函数
+        function goBack() {
+            window.history.back();
+        }
+
+        function goToHome() {
+            window.location.href = 'zhisheng-pharmacy-prototype.html';
+        }
+
+        function goToProducts() {
+            window.location.href = 'zhisheng-pharmacy-prototype.html#products';
+        }
+
+        function goToCart() {
+            window.location.href = 'zhisheng-pharmacy-prototype.html#cart';
+        }
+
+        function goToAccount() {
+            window.location.href = 'zhisheng-pharmacy-prototype.html#account';
+        }
+    </script>
+</body>
+</html>
