@@ -391,7 +391,7 @@
 
         <div class="form-group">
             <label class="form-label">详细描述</label>
-            <textarea class="form-textarea" placeholder="请描述您的症状和用药需求（选填）"></textarea>
+            <textarea class="form-textarea" placeholder="请描述您的症状和用药需求（选填）" id="symptomDetail"></textarea>
         </div>
     </div>
 
@@ -412,13 +412,13 @@
                 </div>
             </div>
             <div id="allergyDetail" style="display: none; margin-top: 10px;">
-                <input type="text" class="form-input" placeholder="请说明过敏药物名称">
+                <input type="text" class="form-input" placeholder="请说明过敏药物名称" id="allergyDetailInput">
             </div>
         </div>
 
         <div class="form-group">
             <label class="form-label">正在服用的药物</label>
-            <textarea class="form-textarea" placeholder="请列出您正在服用的其他药物（选填）"></textarea>
+            <textarea class="form-textarea" placeholder="请列出您正在服用的其他药物（选填）" id="medicationText"></textarea>
             <span class="help-text">如有多种药物，请用逗号分隔</span>
         </div>
 
@@ -488,7 +488,31 @@
     <!-- Toast提示 -->
     <div class="toast" id="toast"></div>
 
+    <script src="global-script.js"></script>
+
     <script>
+        const questionnaireStore = window.ZhiSheng ? window.ZhiSheng.Questionnaire : null;
+        const utils = window.ZhiSheng ? window.ZhiSheng.utils : null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            if (questionnaireStore) {
+                const savedData = questionnaireStore.getQuestionnaire();
+                applyQuestionnaireData(savedData);
+            } else {
+                const legacyData = localStorage.getItem('questionnaireData');
+                if (legacyData) {
+                    try {
+                        applyQuestionnaireData(JSON.parse(legacyData));
+                    } catch (error) {
+                        console.warn('无法解析历史问卷数据', error);
+                    }
+                }
+            }
+
+            toggleAllergyInput(document.getElementById('allergy-yes').checked);
+            toggleSubmit();
+        });
+
         // 症状选择
         function toggleSymptom(element) {
             element.classList.toggle('selected');
@@ -505,6 +529,94 @@
             const agreement = document.getElementById('agreement');
             const submitBtn = document.getElementById('submitBtn');
             submitBtn.disabled = !agreement.checked;
+        }
+
+        function applyQuestionnaireData(data) {
+            if (!data) {
+                return;
+            }
+
+            const genderInput = document.getElementById(data.gender || 'male');
+            if (genderInput) {
+                genderInput.checked = true;
+            }
+
+            const ageInput = document.getElementById('age');
+            if (ageInput && data.age) {
+                ageInput.value = data.age;
+            }
+
+            const heightInput = document.getElementById('height');
+            if (heightInput && data.height) {
+                heightInput.value = data.height;
+            }
+
+            const weightInput = document.getElementById('weight');
+            if (weightInput && data.weight) {
+                weightInput.value = data.weight;
+            }
+
+            const symptomItems = document.querySelectorAll('.symptom-item');
+            symptomItems.forEach(item => item.classList.remove('selected'));
+            if (Array.isArray(data.symptoms)) {
+                data.symptoms.forEach(symptom => {
+                    symptomItems.forEach(item => {
+                        if (item.textContent.trim() === symptom) {
+                            item.classList.add('selected');
+                        }
+                    });
+                });
+            }
+
+            const durationInput = document.getElementById(data.duration || 'days1');
+            if (durationInput) {
+                durationInput.checked = true;
+            } else {
+                const defaultDuration = document.getElementById('days1');
+                if (defaultDuration) {
+                    defaultDuration.checked = true;
+                }
+            }
+
+            const detailTextarea = document.getElementById('symptomDetail');
+            if (detailTextarea) {
+                detailTextarea.value = data.symptomDetail || '';
+            }
+
+            const allergyYes = document.getElementById('allergy-yes');
+            const allergyNo = document.getElementById('allergy-no');
+            if (allergyYes && allergyNo) {
+                if (data.hasAllergy) {
+                    allergyYes.checked = true;
+                } else {
+                    allergyNo.checked = true;
+                }
+            }
+
+            const allergyInput = document.getElementById('allergyDetailInput');
+            if (allergyInput) {
+                allergyInput.value = data.allergyDetail || '';
+            }
+
+            const medicationTextarea = document.getElementById('medicationText');
+            if (medicationTextarea) {
+                medicationTextarea.value = data.medications || '';
+            }
+
+            if (Array.isArray(data.medicalHistory)) {
+                document.querySelectorAll('.checkbox-group .checkbox-input').forEach(input => {
+                    const label = document.querySelector(`label[for="${input.id}"]`);
+                    const labelText = label ? label.textContent : '';
+                    input.checked = data.medicalHistory.includes(labelText);
+                });
+            }
+
+            const consultationInput = document.getElementById('consultation');
+            if (consultationInput) {
+                consultationInput.checked = Boolean(data.needConsultation);
+            }
+
+            toggleAllergyInput(document.getElementById('allergy-yes').checked);
         }
 
         // 验证表单
@@ -532,20 +644,36 @@
                 return;
             }
             
+            const hasAllergy = document.getElementById('allergy-yes').checked;
+            const selectedHistory = Array.from(document.querySelectorAll('.checkbox-group .checkbox-input:checked'))
+                .map(input => {
+                    const label = document.querySelector(`label[for="${input.id}"]`);
+                    return label ? label.textContent : '';
+                })
+                .filter(Boolean);
+
             // 收集表单数据
             const formData = {
                 gender: document.querySelector('input[name="gender"]:checked').id,
                 age: document.getElementById('age').value,
                 height: document.getElementById('height').value,
                 weight: document.getElementById('weight').value,
-                symptoms: Array.from(document.querySelectorAll('.symptom-item.selected')).map(el => el.textContent),
+                symptoms: Array.from(document.querySelectorAll('.symptom-item.selected')).map(el => el.textContent.trim()),
+                symptomDetail: document.getElementById('symptomDetail').value.trim(),
                 duration: document.querySelector('input[name="duration"]:checked').id,
-                hasAllergy: document.getElementById('allergy-yes').checked,
+                hasAllergy,
+                allergyDetail: hasAllergy ? document.getElementById('allergyDetailInput').value.trim() : '',
+                medications: document.getElementById('medicationText').value.trim(),
+                medicalHistory: selectedHistory,
                 needConsultation: document.getElementById('consultation').checked,
                 timestamp: new Date().toISOString()
             };
             
-            // 保存数据
+            if (questionnaireStore) {
+                questionnaireStore.saveQuestionnaire(formData);
+            }
+            
+            // 兼容历史数据存储
             localStorage.setItem('questionnaireData', JSON.stringify(formData));
             
             // 更新订单状态

@@ -283,6 +283,16 @@
             font-size: 15px;
         }
 
+        .notice-reminder {
+            margin-top: 14px;
+            padding: 12px 14px;
+            background: #f0f8f1;
+            border-radius: 8px;
+            border: 1px solid #c8e6c9;
+            color: #2d5f30;
+            font-size: 13px;
+        }
+
         /* 底部容器 */
         .bottom-container {
             position: fixed;
@@ -526,12 +536,27 @@
                 currentPrice = 128;
             }
 
+            if (productData.isPrescription) {
+                addPrescriptionReminder();
+            }
+
             // 设置图片
             const imgSrc = getProductImage(productData.id);
             document.getElementById('galleryImg1').src = imgSrc;
             document.getElementById('galleryImg2').src = imgSrc;
             document.getElementById('galleryImg3').src = imgSrc;
         });
+
+        function addPrescriptionReminder() {
+            const noticeContainer = document.getElementById('notice');
+            if (!noticeContainer || noticeContainer.querySelector('.notice-reminder')) {
+                return;
+            }
+            const reminder = document.createElement('div');
+            reminder.className = 'notice-reminder';
+            reminder.textContent = '温馨提示：处方药下单后，需要填写问卷';
+            noticeContainer.appendChild(reminder);
+        }
 
         // 获取商品图片（演示占位）
         function getProductImage(id) {

@@ -210,6 +210,66 @@
             font-weight: 500;
         }
 
+        /* 问卷提示 */
+        .survey-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.35);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 0 24px;
+            z-index: 200;
+        }
+
+        .survey-overlay.show {
+            display: flex;
+        }
+
+        .survey-dialog {
+            width: 100%;
+            max-width: 320px;
+            background: white;
+            border-radius: 16px;
+            padding: 24px 20px;
+            text-align: center;
+            box-shadow: 0 12px 32px rgba(0,0,0,0.2);
+        }
+
+        .survey-dialog-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2d5f30;
+            margin-bottom: 16px;
+        }
+
+        .survey-dialog-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .survey-action-btn {
+            flex: 1;
+            padding: 10px 0;
+            border-radius: 999px;
+            border: none;
+            font-size: 14px;
+            cursor: pointer;
+            background: #f1f1f1;
+            color: #333;
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+
+        .survey-action-btn.primary {
+            background: linear-gradient(135deg, #4a9b4e, #6ab56e);
+            color: #fff;
+        }
+
+        .survey-action-btn:active {
+            transform: scale(0.97);
+        }
+
         /* Toast */
         .toast {
             position: fixed;
@@ -329,6 +389,16 @@
     <div class="action-buttons">
         <button class="action-btn btn-secondary" onclick="showProblemDialog()">遇到问题</button>
         <button class="action-btn btn-primary" onclick="confirmPayment()">我已完成支付</button>
+    </div>
+
+    <div class="survey-overlay" id="surveyOverlay">
+        <div class="survey-dialog">
+            <div class="survey-dialog-title">感谢您的购买</div>
+            <div class="survey-dialog-actions">
+                <button class="survey-action-btn primary" onclick="openSurvey()">完善问卷</button>
+                <button class="survey-action-btn" onclick="skipSurvey()">继续</button>
+            </div>
+        </div>
     </div>
 
     <!-- Toast提示 -->
@@ -463,13 +533,38 @@
             // 跳转到订单详情页面
             setTimeout(() => {
                 if (orderData.hasPrescription) {
-                    // 有处方药，跳转到问卷页面
-                    window.location.href = 'questionnaire-page.html';
+                    showSurveyPrompt();
                 } else {
-                    // 无处方药，直接跳转到订单成功页面
-                    window.location.href = 'order-detail-page.html?status=success';
+                    goToOrderDetail();
                 }
             }, 2000);
+        }
+
+        function showSurveyPrompt() {
+            const overlay = document.getElementById('surveyOverlay');
+            if (overlay) {
+                overlay.classList.add('show');
+            }
+        }
+
+        function openSurvey() {
+            const overlay = document.getElementById('surveyOverlay');
+            if (overlay) {
+                overlay.classList.remove('show');
+            }
+            window.location.href = 'questionnaire-page.html';
+        }
+
+        function skipSurvey() {
+            const overlay = document.getElementById('surveyOverlay');
+            if (overlay) {
+                overlay.classList.remove('show');
+            }
+            goToOrderDetail();
+        }
+
+        function goToOrderDetail(status = 'success') {
+            window.location.href = `order-detail-page.html?status=${status}`;
         }
 
         // 显示支付失败

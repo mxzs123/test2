@@ -15,7 +15,8 @@ const APP_CONFIG = {
         prefix: 'zhisheng_',
         cartKey: 'cart_items',
         userKey: 'user_info',
-        tokenKey: 'auth_token'
+        tokenKey: 'auth_token',
+        questionnaireKey: 'questionnaire'
     }
 };
 
@@ -51,6 +52,96 @@ const Storage = {
                 localStorage.removeItem(key);
             }
         });
+    }
+};
+
+/**
+ * 会员资料管理
+ */
+const UserProfile = {
+    key: APP_CONFIG.storage.userKey || 'user_info',
+    template: {
+        name: '芝生会员',
+        memberId: '88888888',
+        mobile: '138****8888',
+        email: 'member@zhisheng.com',
+        gender: 'female',
+        birthday: '1990-01-01',
+        region: '上海市浦东新区',
+        remark: '关注跨境购药与慢病管理',
+        updatedAt: null
+    },
+
+    getProfile() {
+        const stored = Storage.get(this.key);
+        if (stored) {
+            return { ...this.template, ...stored };
+        }
+        return { ...this.template };
+    },
+
+    saveProfile(profile) {
+        const payload = { ...this.template, ...profile };
+        Storage.set(this.key, payload);
+        return payload;
+    },
+
+    updateProfile(patch) {
+        const updated = { ...this.getProfile(), ...patch };
+        Storage.set(this.key, updated);
+        return updated;
+    },
+
+    clear() {
+        Storage.remove(this.key);
+    }
+};
+
+/**
+ * 问卷管理
+ */
+const Questionnaire = {
+    key: APP_CONFIG.storage.questionnaireKey || 'questionnaire',
+    template: {
+        gender: 'male',
+        age: '',
+        height: '',
+        weight: '',
+        symptoms: [],
+        symptomDetail: '',
+        duration: 'days1',
+        allergyDetail: '',
+        medications: '',
+        medicalHistory: [],
+        hasAllergy: false,
+        needConsultation: false,
+        timestamp: null
+    },
+
+    getQuestionnaire() {
+        const stored = Storage.get(this.key);
+        if (stored) {
+            return { ...this.template, ...stored };
+        }
+        return { ...this.template };
+    },
+
+    saveQuestionnaire(data) {
+        const payload = { ...this.template, ...data };
+        payload.timestamp = data.timestamp || new Date().toISOString();
+        Storage.set(this.key, payload);
+        return payload;
+    },
+
+    updateQuestionnaire(partial) {
+        const merged = { ...this.getQuestionnaire(), ...partial };
+        merged.timestamp = partial.timestamp || new Date().toISOString();
+        Storage.set(this.key, merged);
+        return merged;
+    },
+
+    clear() {
+        Storage.remove(this.key);
     }
 };
 
@@ -532,5 +623,7 @@ window.ZhiSheng = {
         generateOrderNumber
     },
     checkLogin,
-    handlePrescriptionPurchase
+    handlePrescriptionPurchase,
+    UserProfile,
+    Questionnaire
 };

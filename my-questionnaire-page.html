@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的问卷 - 芝生药局</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background-color: #f8faf8;
+            color: #333;
+            padding-bottom: 90px;
+        }
+
+        .top-nav {
+            background: white;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .back-btn {
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: #f0f0f0;
+            margin-right: 12px;
+            cursor: pointer;
+        }
+
+        .page-title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .content {
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .summary-card {
+            background: white;
+            border-radius: 18px;
+            padding: 20px;
+            box-shadow: 0 10px 26px rgba(0,0,0,0.08);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .summary-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            color: #999;
+            font-weight: 600;
+        }
+
+        .summary-status.completed {
+            color: #4a9b4e;
+        }
+
+        .summary-meta {
+            font-size: 13px;
+            color: #666;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .action-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: #4a9b4e;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .form-card {
+            background: white;
+            border-radius: 18px;
+            padding: 20px 18px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+        }
+
+        .form-section-title {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 14px;
+        }
+
+        .form-grid {
+            display: grid;
+            gap: 16px;
+        }
+
+        @media (min-width: 520px) {
+            .form-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                column-gap: 20px;
+            }
+            .span-2 {
+                grid-column: span 2;
+            }
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-label {
+            font-size: 13px;
+            color: #555;
+        }
+
+        .form-input,
+        .form-textarea,
+        .form-select {
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 1px solid #e0e0e0;
+            font-size: 14px;
+            transition: border-color 0.2s ease;
+            width: 100%;
+        }
+
+        .form-input:focus,
+        .form-textarea:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: #4a9b4e;
+        }
+
+        .form-textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .symptom-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .symptom-tag {
+            padding: 6px 14px;
+            border-radius: 16px;
+            border: 1px solid #d0d0d0;
+            font-size: 13px;
+            color: #555;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: #f7f7f7;
+        }
+
+        .symptom-tag.selected {
+            background: #e8f5e9;
+            border-color: #4a9b4e;
+            color: #2d5f30;
+            box-shadow: inset 0 0 0 1px rgba(74,155,78,0.2);
+        }
+
+        .checkbox-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: #555;
+        }
+
+        .checkbox-input {
+            width: 16px;
+            height: 16px;
+        }
+
+        .toggle-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 14px;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+        }
+
+        .toggle-row label {
+            font-size: 13px;
+            color: #555;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px 0;
+            border-radius: 999px;
+            border: none;
+            font-size: 15px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4a9b4e, #6ab56e);
+            color: white;
+            box-shadow: 0 10px 20px rgba(74,155,78,0.2);
+        }
+
+        .btn-secondary {
+            background: #f1f1f1;
+            color: #555;
+        }
+
+        .btn-ghost {
+            background: #ffffff;
+            color: #4a9b4e;
+            border: 1px solid #cbe6ce;
+        }
+
+        .btn:active {
+            transform: scale(0.97);
+        }
+    </style>
+</head>
+<body>
+    <div class="top-nav">
+        <div class="back-btn" onclick="window.history.back()">
+            <span class="material-symbols-outlined" style="font-size: 20px;">arrow_back</span>
+        </div>
+        <div class="page-title">我的问卷</div>
+    </div>
+
+    <div class="content">
+        <div class="summary-card">
+            <div class="summary-status" id="summaryStatus">
+                <span class="material-symbols-outlined" style="font-size: 18px;">assignment</span>
+                问卷信息未完善
+            </div>
+            <div class="summary-meta" id="summaryMeta">
+                <span>暂无提交记录</span>
+            </div>
+            <div class="action-link" onclick="goToFullQuestionnaire()">
+                <span class="material-symbols-outlined" style="font-size: 18px;">description</span>
+                去填写完整版问卷
+            </div>
+        </div>
+
+        <div class="form-card">
+            <div class="form-section-title">快速编辑</div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label" for="questionnaireAge">年龄</label>
+                    <input class="form-input" type="number" id="questionnaireAge" placeholder="请输入年龄">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="questionnaireHeight">身高(cm)</label>
+                    <input class="form-input" type="number" id="questionnaireHeight" placeholder="身高">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="questionnaireWeight">体重(kg)</label>
+                    <input class="form-input" type="number" id="questionnaireWeight" placeholder="体重">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="questionnaireDuration">症状持续时间</label>
+                    <select class="form-select" id="questionnaireDuration">
+                        <option value="days1">1-3天</option>
+                        <option value="days2">4-7天</option>
+                        <option value="days3">一周以上</option>
+                    </select>
+                </div>
+                <div class="form-group span-2">
+                    <label class="form-label">主要症状</label>
+                    <div class="symptom-options" id="symptomOptions"></div>
+                </div>
+                <div class="form-group span-2">
+                    <label class="form-label" for="questionnaireSymptomDetail">症状描述</label>
+                    <textarea class="form-textarea" id="questionnaireSymptomDetail" placeholder="请补充说明症状细节"></textarea>
+                </div>
+                <div class="form-group span-2">
+                    <label class="form-label">既往病史</label>
+                    <div class="checkbox-list" id="historyList"></div>
+                </div>
+                <div class="form-group span-2">
+                    <label class="form-label" for="questionnaireMedications">正在服用的药物</label>
+                    <textarea class="form-textarea" id="questionnaireMedications" placeholder="选填，多个药物请用逗号分隔"></textarea>
+                </div>
+                <div class="form-group span-2">
+                    <label class="form-label">药物过敏史</label>
+                    <div class="toggle-row">
+                        <label>是否有药物过敏</label>
+                        <input type="checkbox" id="questionnaireHasAllergy" class="checkbox-input">
+                    </div>
+                    <input class="form-input" type="text" id="questionnaireAllergyDetail" placeholder="请填写过敏药物" style="margin-top: 10px; display: none;">
+                </div>
+                <div class="form-group span-2">
+                    <div class="toggle-row">
+                        <label>是否需要视频问诊</label>
+                        <input type="checkbox" id="questionnaireConsultation" class="checkbox-input">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button class="btn btn-secondary" onclick="handleReset()">还原</button>
+                <button class="btn btn-ghost" onclick="goToFullQuestionnaire()">完整版问卷</button>
+                <button class="btn btn-primary" onclick="handleSave()">保存修改</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="global-script.js"></script>
+    <script>
+        const questionnaireStore = window.ZhiSheng ? window.ZhiSheng.Questionnaire : null;
+        const utils = window.ZhiSheng ? window.ZhiSheng.utils : null;
+        const toast = window.ZhiSheng ? window.ZhiSheng.Toast : null;
+
+        const symptomOptions = ['发热', '咳嗽', '头痛', '咽痛', '鼻塞', '流涕', '乏力', '其他'];
+        const historyOptions = ['高血压', '糖尿病', '心脏病', '肝肾疾病', '无'];
+
+        function createSymptomChips(selected = []) {
+            const container = document.getElementById('symptomOptions');
+            container.innerHTML = '';
+            symptomOptions.forEach(symptom => {
+                const chip = document.createElement('div');
+                chip.className = 'symptom-tag';
+                chip.textContent = symptom;
+                if (selected.includes(symptom)) {
+                    chip.classList.add('selected');
+                }
+                chip.addEventListener('click', () => {
+                    chip.classList.toggle('selected');
+                });
+                container.appendChild(chip);
+            });
+        }
+
+        function createHistoryList(selected = []) {
+            const container = document.getElementById('historyList');
+            container.innerHTML = '';
+            historyOptions.forEach((history, index) => {
+                const wrapper = document.createElement('label');
+                wrapper.className = 'checkbox-item';
+
+                const input = document.createElement('input');
+                input.type = 'checkbox';
+                input.className = 'checkbox-input';
+                input.id = `history_${index}`;
+                input.checked = selected.includes(history);
+
+                const text = document.createElement('span');
+                text.textContent = history;
+
+                wrapper.appendChild(input);
+                wrapper.appendChild(text);
+                container.appendChild(wrapper);
+            });
+        }
+
+        function showToast(message) {
+            if (toast && typeof toast.show === 'function') {
+                toast.show(message);
+            } else {
+                console.log(message);
+            }
+        }
+
+        function populateForm(data) {
+            document.getElementById('questionnaireAge').value = data.age || '';
+            document.getElementById('questionnaireHeight').value = data.height || '';
+            document.getElementById('questionnaireWeight').value = data.weight || '';
+            const durationSelect = document.getElementById('questionnaireDuration');
+            const validDurations = ['days1', 'days2', 'days3'];
+            durationSelect.value = validDurations.includes(data.duration) ? data.duration : 'days1';
+            document.getElementById('questionnaireSymptomDetail').value = data.symptomDetail || '';
+            document.getElementById('questionnaireMedications').value = data.medications || '';
+            document.getElementById('questionnaireHasAllergy').checked = Boolean(data.hasAllergy);
+            document.getElementById('questionnaireAllergyDetail').value = data.allergyDetail || '';
+            document.getElementById('questionnaireConsultation').checked = Boolean(data.needConsultation);
+            toggleAllergyInput(data.hasAllergy);
+
+            createSymptomChips(Array.isArray(data.symptoms) ? data.symptoms : []);
+            createHistoryList(Array.isArray(data.medicalHistory) ? data.medicalHistory : []);
+            updateSummary(data);
+        }
+
+        function toggleAllergyInput(show) {
+            const detailInput = document.getElementById('questionnaireAllergyDetail');
+            detailInput.style.display = show ? 'block' : 'none';
+        }
+
+        document.getElementById('questionnaireHasAllergy').addEventListener('change', (event) => {
+            toggleAllergyInput(event.target.checked);
+        });
+
+        function collectSelectedSymptoms() {
+            return Array.from(document.querySelectorAll('#symptomOptions .symptom-tag.selected')).map(item => item.textContent.trim());
+        }
+
+        function collectSelectedHistory() {
+            return Array.from(document.querySelectorAll('#historyList .checkbox-input:checked')).map(input => input.nextSibling.textContent.trim());
+        }
+
+        function updateSummary(data) {
+            const statusEl = document.getElementById('summaryStatus');
+            const metaEl = document.getElementById('summaryMeta');
+
+            const hasCompleted = Boolean(data && data.symptoms && data.symptoms.length);
+            const statusText = hasCompleted ? '问卷信息已完善' : '问卷信息未完善';
+            statusEl.innerHTML = `<span class="material-symbols-outlined" style="font-size: 18px;">assignment</span>${statusText}`;
+            statusEl.classList.toggle('completed', hasCompleted);
+
+            const metaParts = [];
+            if (data.age) {
+                metaParts.push(`年龄 ${data.age}`);
+            }
+            if (data.height && data.weight) {
+                metaParts.push(`身高 ${data.height}cm / 体重 ${data.weight}kg`);
+            }
+            if (Array.isArray(data.symptoms) && data.symptoms.length) {
+                metaParts.push(`症状 ${data.symptoms.join('、')}`);
+            }
+            if (data.timestamp) {
+                const timeText = utils && typeof utils.formatDate === 'function'
+                    ? utils.formatDate(data.timestamp, 'YYYY-MM-DD HH:mm')
+                    : new Date(data.timestamp).toLocaleString('zh-CN', { hour12: false });
+                metaParts.push(`最近更新 ${timeText}`);
+            }
+
+            metaEl.textContent = metaParts.length ? metaParts.join(' ｜ ') : '暂无提交记录';
+        }
+
+        function getFormData() {
+            const hasAllergy = document.getElementById('questionnaireHasAllergy').checked;
+            return {
+                age: document.getElementById('questionnaireAge').value,
+                height: document.getElementById('questionnaireHeight').value,
+                weight: document.getElementById('questionnaireWeight').value,
+                duration: document.getElementById('questionnaireDuration').value,
+                symptoms: collectSelectedSymptoms(),
+                symptomDetail: document.getElementById('questionnaireSymptomDetail').value.trim(),
+                medicalHistory: collectSelectedHistory(),
+                medications: document.getElementById('questionnaireMedications').value.trim(),
+                hasAllergy,
+                allergyDetail: hasAllergy ? document.getElementById('questionnaireAllergyDetail').value.trim() : '',
+                needConsultation: document.getElementById('questionnaireConsultation').checked
+            };
+        }
+
+        function handleSave() {
+            if (!questionnaireStore) {
+                showToast('暂时无法保存问卷');
+                return;
+            }
+
+            const data = getFormData();
+            if (!data.age) {
+                showToast('请填写年龄');
+                return;
+            }
+            if (!data.symptoms.length) {
+                showToast('请选择至少一个症状');
+                return;
+            }
+
+            const saved = questionnaireStore.saveQuestionnaire(data);
+            populateForm(saved);
+            showToast('问卷信息已更新');
+        }
+
+        function handleReset() {
+            if (!questionnaireStore) {
+                return;
+            }
+            const data = questionnaireStore.getQuestionnaire();
+            populateForm(data);
+            showToast('已还原为当前保存的问卷');
+        }
+
+        function goToFullQuestionnaire() {
+            window.location.href = 'questionnaire-page.html';
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const data = questionnaireStore ? questionnaireStore.getQuestionnaire() : {};
+            populateForm(data);
+        });
+    </script>
+</body>
+</html>
