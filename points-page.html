@@ -73,6 +73,12 @@
             opacity: 0.9;
         }
 
+        .balance-meta {
+            font-size: 14px;
+            opacity: 0.85;
+            margin-top: 8px;
+        }
+
         .points-tips {
             background: rgba(255, 255, 255, 0.1);
             padding: 15px;
@@ -306,11 +312,12 @@
     <div class="points-header">
         <div class="points-balance">
             <div class="balance-label">当前积分余额</div>
-            <div class="balance-amount">8,888</div>
+            <div class="balance-amount" id="pointsBalance">0</div>
             <div class="balance-unit">积分</div>
+            <div class="balance-meta" id="pointsBalanceValue">≈可抵扣 ¥0</div>
         </div>
         <div class="points-tips">
-            💡 积分可用于商城消费，1积分 = 0.01元，购买商品可获得积分奖励
+            💡 积分按消费累计：每消费100日元获得1积分，可按1积分=1日元抵扣订单金额
         </div>
     </div>
 
@@ -319,11 +326,11 @@
         <div class="rules-title">积分使用规则</div>
         <div class="rule-item">
             <div class="rule-dot"></div>
-            <div class="rule-text">100积分 = 1元，可抵扣订单金额</div>
+            <div class="rule-text">消费满100日元可获得1积分</div>
         </div>
         <div class="rule-item">
             <div class="rule-dot"></div>
-            <div class="rule-text">购买商品获得相应积分，1元 = 1积分</div>
+            <div class="rule-text">积分抵扣比例为 1积分 = 1日元</div>
         </div>
         <div class="rule-item">
             <div class="rule-dot"></div>
@@ -448,6 +455,35 @@
     </div>
 
     <script>
+        const POINTS_STORAGE_KEY = 'zhisheng_points_balance';
+        const DEFAULT_POINTS = 8888;
+        const POINT_VALUE = 1;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const balance = ensurePointsBalance();
+            updatePointsHeader(balance);
+        });
+
+        function ensurePointsBalance() {
+            const stored = parseInt(localStorage.getItem(POINTS_STORAGE_KEY), 10);
+            if (Number.isNaN(stored) || stored < 0) {
+                localStorage.setItem(POINTS_STORAGE_KEY, DEFAULT_POINTS.toString());
+                return DEFAULT_POINTS;
+            }
+            return stored;
+        }
+
+        function updatePointsHeader(balance) {
+            const balanceEl = document.getElementById('pointsBalance');
+            const balanceValueEl = document.getElementById('pointsBalanceValue');
+            if (balanceEl) {
+                balanceEl.textContent = balance.toLocaleString('ja-JP');
+            }
+            if (balanceValueEl) {
+                balanceValueEl.textContent = `≈可抵扣 ¥${(balance * POINT_VALUE).toLocaleString('ja-JP')}`;
+            }
+        }
+
         // 返回
         function goBack() {
             window.history.back();

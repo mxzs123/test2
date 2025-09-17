@@ -787,12 +787,13 @@
                 </div>
             </div>
             <div class="points-input-area" id="pointsInputArea" style="display: none;">
-                <div class="points-available">可用积分：888</div>
+                <div class="points-available">可用积分：<span id="availablePoints">0</span></div>
                 <div class="points-input">
-                    <input type="number" id="pointsInput" placeholder="输入积分数量" max="888" min="0" oninput="calculatePointsDeduction()">
+                    <input type="number" id="pointsInput" placeholder="输入积分数量" min="0" step="1" oninput="calculatePointsDeduction()">
                     <button class="use-all-points" onclick="useAllPoints()">全部使用</button>
                 </div>
-                <div class="points-tip">100积分 = 1元</div>
+                <div class="points-tip">1积分 = 1日元</div>
+                <div class="points-tip" id="pointsLimitTip">本单最多可使用 0 积分（可抵扣 ¥0）</div>
             </div>
         </div>
     </div>
@@ -868,6 +869,11 @@
     <div class="toast" id="toast"></div>
 
     <script>
+        const POINTS_STORAGE_KEY = 'zhisheng_points_balance';
+        const DEFAULT_POINTS = 8888;
+        const POINT_VALUE = 1;
+        const SPEND_PER_POINT = 100;
+
         // 全局变量
         let orderData = {
             items: [],
@@ -882,8 +888,58 @@
             hasPrescription: false,
             selectedAddress: 0,
             selectedCoupon: null,
-            pointsUsed: 0
+            pointsUsed: 0,
+            availablePoints: 0,
+            pointsEarned: 0
         };
+
+        function ensurePointsBalance() {
+            const stored = parseInt(localStorage.getItem(POINTS_STORAGE_KEY), 10);
+            if (Number.isNaN(stored) || stored < 0) {
+                localStorage.setItem(POINTS_STORAGE_KEY, DEFAULT_POINTS.toString());
+                return DEFAULT_POINTS;
+            }
+            return stored;
+        }
+
+        function persistPointsBalance(value) {
+            const safeValue = Math.max(0, Math.floor(value));
+            localStorage.setItem(POINTS_STORAGE_KEY, safeValue.toString());
+            return safeValue;
+        }
+
+        function formatNumber(value) {
+            return Number(value).toLocaleString('ja-JP');
+        }
+
+        function getPayableBeforePoints() {
+            return Math.max(orderData.subtotal + orderData.tax + orderData.deliveryFee - orderData.couponDiscount, 0);
+        }
+
+        function getMaxRedeemablePoints() {
+            const maxBasedOnOrder = Math.floor(getPayableBeforePoints() / POINT_VALUE);
+            return Math.min(orderData.availablePoints, Math.max(0, maxBasedOnOrder));
+        }
+
+        function updatePointsSummary() {
+            const availableEl = document.getElementById('availablePoints');
+            const limitEl = document.getElementById('pointsLimitTip');
+            const inputEl = document.getElementById('pointsInput');
+            const maxRedeem = getMaxRedeemablePoints();
+
+            if (availableEl) {
+                availableEl.textContent = formatNumber(orderData.availablePoints);
+            }
+
+            if (limitEl) {
+                limitEl.textContent = `本单最多可使用 ${formatNumber(maxRedeem)} 积分（可抵扣 ¥${formatNumber(maxRedeem * POINT_VALUE)}）`;
+            }
+
+            if (inputEl) {
+                inputEl.max = maxRedeem;
+                inputEl.placeholder = maxRedeem > 0 ? `最多可用 ${maxRedeem}` : '暂无可用积分';
+            }
+        }
 
         // 模拟优惠券数据
         const availableCoupons = [
@@ -897,12 +953,14 @@
             // 从localStorage获取订单商品
             const checkoutItems = JSON.parse(localStorage.getItem('checkoutItems') || '[]');
             orderData.items = checkoutItems;
+            orderData.availablePoints = ensurePointsBalance();
             
             // 检查是否有处方药
             orderData.hasPrescription = checkoutItems.some(item => item.isPrescription);
             
             renderOrderItems();
             calculateTotal();
+            updatePointsSummary();
         });
 
         // 渲染商品列表
@@ -956,11 +1014,23 @@
             // 计算税金（假设为商品总价的8%）
             orderData.tax = Math.round(orderData.subtotal * 0.08);
 
+            const maxRedeem = getMaxRedeemablePoints();
+            if (orderData.pointsUsed > maxRedeem) {
+                orderData.pointsUsed = maxRedeem;
+                orderData.pointsDiscount = orderData.pointsUsed * POINT_VALUE;
+                const inputEl = document.getElementById('pointsInput');
+                if (inputEl) {
+                    inputEl.value = orderData.pointsUsed ? orderData.pointsUsed : '';
+                }
+            }
+
             // 计算总价：商品价格 + 税金 + 运费 - 优惠券 - 积分抵扣
             orderData.total = orderData.subtotal + orderData.tax + orderData.deliveryFee - orderData.couponDiscount - orderData.pointsDiscount;
 
             // 确保总价不为负数
             if (orderData.total < 0) orderData.total = 0;
+
+            orderData.pointsEarned = Math.floor(orderData.total / SPEND_PER_POINT);
 
             // 更新显示
             document.getElementById('subtotal').textContent = `¥${orderData.subtotal}`;
@@ -970,6 +1040,8 @@
             document.getElementById('pointsDiscount').textContent = `-¥${orderData.pointsDiscount}`;
             document.getElementById('totalAmount').textContent = `¥${orderData.total}`;
             document.getElementById('bottomTotal').textContent = `¥${orderData.total}`;
+
+            updatePointsSummary();
         }
 
         // 选择配送方式
@@ -1010,8 +1082,17 @@
 
         // 提交订单
         function submitOrder() {
+            calculateTotal();
+
             // 模拟支付流程
             showToast('正在生成订单...');
+
+            const pointsRemaining = Math.max(0, orderData.availablePoints - orderData.pointsUsed);
+            const updatedBalance = persistPointsBalance(pointsRemaining + orderData.pointsEarned);
+
+            orderData.pointsRemaining = pointsRemaining;
+            orderData.pointsBalanceAfter = updatedBalance;
+            orderData.availablePoints = updatedBalance;
 
             // 保存订单数据
             localStorage.setItem('currentOrder', JSON.stringify(orderData));
@@ -1114,11 +1195,15 @@
                 inputArea.style.display = 'none';
                 orderData.pointsUsed = 0;
                 orderData.pointsDiscount = 0;
-                document.getElementById('pointsInput').value = '';
+                const pointsInput = document.getElementById('pointsInput');
+                if (pointsInput) {
+                    pointsInput.value = '';
+                }
             } else {
                 // 开启积分抵扣
                 toggle.classList.add('active');
                 inputArea.style.display = 'block';
+                updatePointsSummary();
             }
 
             calculateTotal();
@@ -1127,11 +1212,20 @@
         // 计算积分抵扣
         function calculatePointsDeduction() {
             const pointsInput = document.getElementById('pointsInput');
-            const points = Math.min(parseInt(pointsInput.value) || 0, 888);
+            if (!pointsInput) return;
 
-            // 100积分 = 1元
+            const requested = Math.max(0, parseInt(pointsInput.value, 10) || 0);
+            const maxRedeem = getMaxRedeemablePoints();
+            const points = Math.min(requested, maxRedeem);
+
             orderData.pointsUsed = points;
-            orderData.pointsDiscount = Math.floor(points / 100);
+            orderData.pointsDiscount = points * POINT_VALUE;
+
+            if (points === 0) {
+                pointsInput.value = '';
+            } else if (points !== requested) {
+                pointsInput.value = points;
+            }
 
             calculateTotal();
         }
@@ -1139,8 +1233,20 @@
         // 使用全部积分
         function useAllPoints() {
             const pointsInput = document.getElementById('pointsInput');
-            pointsInput.value = '888';
-            calculatePointsDeduction();
+            if (!pointsInput) return;
+
+            const maxRedeem = getMaxRedeemablePoints();
+            if (maxRedeem > 0) {
+                pointsInput.value = maxRedeem;
+                orderData.pointsUsed = maxRedeem;
+                orderData.pointsDiscount = maxRedeem * POINT_VALUE;
+            } else {
+                pointsInput.value = '';
+                orderData.pointsUsed = 0;
+                orderData.pointsDiscount = 0;
+            }
+
+            calculateTotal();
         }
 
         // 显示提示

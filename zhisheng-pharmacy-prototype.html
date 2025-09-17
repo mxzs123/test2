@@ -30,6 +30,50 @@
             margin-top: 0;
         }
 
+        .hero-branding {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 20px 16px 0;
+        }
+
+        .hero-logo {
+            width: 60px;
+            height: 60px;
+            border-radius: 20px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 6px 18px rgba(74, 155, 78, 0.18);
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .hero-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .hero-copy {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .hero-name {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2d5f30;
+        }
+
+        .hero-slogan {
+            font-size: 13px;
+            color: #4a9b4e;
+            line-height: 1.4;
+        }
+
         /* 底部导航栏 */
         .bottom-nav {
             position: fixed;
@@ -42,6 +86,26 @@
             padding: 8px 0;
             box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
             z-index: 1000;
+        }
+
+        @media (max-width: 480px) {
+            .hero-branding {
+                padding: 16px 12px 0;
+            }
+
+            .hero-logo {
+                width: 52px;
+                height: 52px;
+                border-radius: 16px;
+            }
+
+            .hero-name {
+                font-size: 18px;
+            }
+
+            .hero-slogan {
+                font-size: 12px;
+            }
         }
 
         .nav-item {
@@ -384,19 +448,6 @@
             font-weight: 600;
         }
 
-        .product-tax-price {
-            color: #666;
-            font-size: 12px;
-            margin-top: 3px;
-        }
-
-        .product-stock {
-            color: #4a9b4e;
-            font-size: 12px;
-            margin-top: 3px;
-            font-weight: 500;
-        }
-
         .add-cart-btn {
             width: 100%;
             padding: 8px;
@@ -650,6 +701,16 @@
 <body>
     <!-- 首页内容 -->
     <div class="page-content" id="homePage">
+        <div class="hero-branding">
+            <div class="hero-logo">
+                <img src="assets/images/branding/logo.png" alt="芝生药局 Logo">
+            </div>
+            <div class="hero-copy">
+                <div class="hero-name">芝生药局</div>
+                <div class="hero-slogan">守护全家健康，安心直送每一步</div>
+            </div>
+        </div>
+
         <!-- 轮播图 -->
         <div class="carousel">
             <div class="carousel-inner" id="carouselInner">
@@ -771,8 +832,6 @@
                         <div class="product-name">龙角散清凉糖</div>
                         <div class="product-spec">40g/盒</div>
                         <div class="product-price">¥45</div>
-                        <div class="product-tax-price">含税价 ¥49.50</div>
-                        <div class="product-stock">库存: 256</div>
                         <button class="add-cart-btn" onclick="event.stopPropagation(); addToCart(1, '龙角散清凉糖', 45)">加入购物车</button>
                     </div>
                 </div>
@@ -782,8 +841,6 @@
                         <div class="product-name">小林创可贴</div>
                         <div class="product-spec">10g/支</div>
                         <div class="product-price">¥68</div>
-                        <div class="product-tax-price">含税价 ¥74.80</div>
-                        <div class="product-stock">库存: 128</div>
                         <button class="add-cart-btn" onclick="event.stopPropagation(); addToCart(2, '小林体可贴', 68)">加入购物车</button>
                     </div>
                 </div>
@@ -796,8 +853,6 @@
                         <div class="product-name">处方感冒药</div>
                         <div class="product-spec">30片/盒</div>
                         <div class="product-price">¥128</div>
-                        <div class="product-tax-price">含税价 ¥140.80</div>
-                        <div class="product-stock">库存: 64</div>
                         <button class="add-cart-btn" onclick="event.stopPropagation(); addToCart(3, '处方感冒药', 128, true)">加入购物车</button>
                     </div>
                 </div>
@@ -807,8 +862,6 @@
                         <div class="product-name">参天FX眼药水</div>
                         <div class="product-spec">12ml/瓶</div>
                         <div class="product-price">¥58</div>
-                        <div class="product-tax-price">含税价 ¥63.80</div>
-                        <div class="product-stock">库存: 342</div>
                         <button class="add-cart-btn" onclick="event.stopPropagation(); addToCart(4, '参天FX眼药水', 58)">加入购物车</button>
                     </div>
                 </div>
@@ -1937,8 +1990,6 @@
                         <div class="product-name">${product.name}</div>
                         <div class="product-spec">规格信息</div>
                         <div class="product-price">¥${product.price}</div>
-                        <div class="product-tax-price">含税价 ¥${product.taxPrice.toFixed(2)}</div>
-                        <div class="product-stock">库存: ${product.stock}</div>
                         <button class="add-cart-btn" onclick="event.stopPropagation(); addToCart(${product.id}, '${product.name}', ${product.price}, ${product.isPrescription || false})">
                             加入购物车
                         </button>

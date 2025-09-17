@@ -133,9 +133,16 @@
 
         .price-section {
             display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .price-main {
+            display: flex;
             align-items: baseline;
             gap: 10px;
-            margin-bottom: 15px;
         }
 
         .current-price {
@@ -155,34 +162,9 @@
             font-size: 14px;
         }
 
-        .tax-price {
-            color: #ff9800;
-            font-size: 16px;
-            font-weight: 500;
-        }
-
-        .total-price {
-            color: #4a9b4e;
-            font-size: 18px;
-            font-weight: 600;
-        }
-
-        .stock-section {
-            padding: 12px 0;
-            border-top: 1px solid #f0f0f0;
-            margin-top: 15px;
-        }
-
-        .stock-label {
-            color: #666;
-            font-size: 14px;
-        }
-
-        .stock-count {
-            color: #4a9b4e;
-            font-size: 16px;
-            font-weight: 600;
-            margin-left: 5px;
+        .price-note {
+            font-size: 12px;
+            color: #999;
         }
 
 
@@ -311,23 +293,6 @@
             box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
         }
 
-        .disclaimer-section {
-            padding: 8px 15px;
-            border-bottom: 1px solid #f0f0f0;
-            text-align: center;
-        }
-
-        .disclaimer-link {
-            color: #4a9b4e;
-            font-size: 13px;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-        .disclaimer-link:hover {
-            text-decoration: underline;
-        }
-
         /* 底部操作栏 */
         .bottom-bar {
             display: flex;
@@ -443,27 +408,13 @@
         </div>
 
         <div class="price-section">
-            <div style="display: flex; flex-direction: column; gap: 5px;">
-                <div>
-                    <span class="price-label">商品价格：</span>
-                    <span class="current-price" id="currentPrice">¥45</span>
-                    <span class="price-label" style="margin-left: 15px;">税金：</span>
-                    <span class="tax-price" id="taxPrice">¥4.50</span>
-                </div>
-                <div class="total-price-line">
-                    <span class="price-label">含税价：</span>
-                    <span class="total-price" id="totalPrice">¥49.50</span>
-                    <span class="original-price" style="margin-left: 10px;">¥68</span>
-                </div>
+            <div class="price-main">
+                <span class="price-label">当前售价：</span>
+                <span class="current-price" id="currentPrice">¥45</span>
+                <span class="original-price" id="originalPrice">¥68</span>
             </div>
+            <div class="price-note">价格已包含预估跨境费用，实时库存以结算确认信息为准</div>
         </div>
-
-        <!-- 库存信息 -->
-        <div class="stock-section">
-            <span class="stock-label">库存数量：</span>
-            <span class="stock-count" id="stockCount">256</span>
-        </div>
-
 
         <!-- 数量选择 -->
         <div class="quantity-section">
@@ -530,11 +481,6 @@
 
     <!-- 底部操作栏 -->
     <div class="bottom-container">
-        <!-- 免责声明链接 -->
-        <div class="disclaimer-section">
-            <a href="#" class="disclaimer-link" onclick="showDisclaimer()">查看免责声明</a>
-        </div>
-
         <div class="bottom-bar">
             <a href="#" class="bottom-action" onclick="showServiceChat()">
                 <div class="bottom-icon service-icon"></div>
@@ -727,11 +673,6 @@
             setTimeout(() => {
                 toast.classList.remove('show');
             }, 2000);
-        }
-
-        // 显示免责声明
-        function showDisclaimer() {
-            alert('免责声明：\n\n1. 本网站所售商品均为正品，但请在专业医师指导下使用。\n2. 处方药需提供有效处方，并可能产生额外的医疗咨询费用。\n3. 请仔细阅读商品说明书，如有不良反应请及时就医。\n4. 本网站不承担因使用商品而产生的任何直接或间接损失。\n5. 如有疑问，请咨询专业医师或联系客服。');
         }
     </script>
 </body>

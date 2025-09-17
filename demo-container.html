@@ -12,6 +12,12 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --device-width: 430px;
+            --device-height: 932px;
+            --device-radius: 30px;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
             background: linear-gradient(135deg, #4a9b4e 0%, #2d5f30 100%);
@@ -20,7 +26,7 @@
             flex-direction: column;
             align-items: center;
             padding: 20px;
-            overflow-x: auto;
+            overflow-x: hidden;
         }
 
         /* 顶部控制栏 */
@@ -90,6 +96,8 @@
             padding: 8px;
             background: #f5f5f5;
             border-radius: 8px;
+            flex-wrap: wrap;
+            align-items: center;
         }
 
         .page-group-title {
@@ -99,6 +107,7 @@
             font-weight: 600;
             display: flex;
             align-items: center;
+            flex-shrink: 0;
         }
 
         .page-btn {
@@ -132,15 +141,20 @@
             padding: 10px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             transform: scale(1);
-            transform-origin: center top;
+            transform-origin: top center;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: fit-content;
+            margin: 0 auto;
         }
 
         /* iPhone 19.5:9 比例 - 使用更大尺寸避免内容压缩 */
         .phone-frame {
-            width: 430px;
-            height: 932px;
+            width: var(--device-width);
+            height: var(--device-height);
             background: #000;
-            border-radius: 30px;
+            border-radius: var(--device-radius);
             overflow: hidden;
             position: relative;
         }
@@ -325,11 +339,41 @@
 
             .control-bar {
                 padding: 10px 15px;
+                max-width: none;
+            }
+
+            body {
+                padding: 12px;
+            }
+
+            .control-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .device-selector {
+                width: 100%;
+                flex-wrap: wrap;
+            }
+
+            .page-selector {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .page-group {
+                width: 100%;
+            }
+
+            .page-group-title {
+                padding-left: 0;
             }
 
             .page-btn {
                 font-size: 12px;
                 padding: 5px 10px;
+                width: 100%;
             }
         }
 
@@ -388,7 +432,7 @@
                 <button class="page-btn" onclick="loadPage('upload-id-page.html')">证件上传</button>
                 <button class="page-btn" onclick="loadPage('company-info-page.html')">关于我们</button>
                 <button class="page-btn" onclick="loadPage('news-list-page.html')">资讯</button>
-                <button class="page-btn" onclick="loadPage('disclaimer-page.html')">免责声明</button>
+                <button class="page-btn" onclick="loadPage('register-page.html')">注册</button>
             </div>
         </div>
     </div>
@@ -433,10 +477,46 @@
     </div>
 
     <script>
+        const deviceConfigs = {
+            iphone: {
+                width: 430,
+                height: 932,
+                radius: 30,
+                info: 'iPhone 14 Pro Max (430 x 932) - 19.5:9',
+                showHomeIndicator: true
+            },
+            android: {
+                width: 412,
+                height: 915,
+                radius: 24,
+                info: 'Android 20:9 (412 x 915)',
+                showHomeIndicator: false
+            }
+        };
+
         // 当前设备类型和缩放比例
         let currentDevice = 'iphone';
         let currentPage = 'zhisheng-pharmacy-prototype.html';
         let currentScale = 1;
+
+        function applyDeviceConfig(config) {
+            const root = document.documentElement;
+            root.style.setProperty('--device-width', `${config.width}px`);
+            root.style.setProperty('--device-height', `${config.height}px`);
+            root.style.setProperty('--device-radius', `${config.radius}px`);
+
+            const homeIndicator = document.querySelector('.home-indicator');
+            if (homeIndicator) {
+                homeIndicator.style.display = config.showHomeIndicator ? 'block' : 'none';
+            }
+
+            const deviceInfo = document.getElementById('deviceInfo');
+            if (deviceInfo) {
+                deviceInfo.textContent = config.info;
+            }
+        }
+
+        applyDeviceConfig(deviceConfigs[currentDevice]);
 
         // 调整缩放
         function adjustScale(delta) {
@@ -455,13 +535,7 @@
             const container = document.querySelector('.phone-container');
             container.style.transform = `scale(${currentScale})`;
             document.getElementById('scaleValue').textContent = `${Math.round(currentScale * 100)}%`;
-
-            // 根据缩放调整容器高度避免截断
-            if (currentScale < 1) {
-                container.style.marginBottom = `${(1 - currentScale) * -400}px`;
-            } else {
-                container.style.marginBottom = '0';
-            }
+            container.style.marginBottom = '0';
         }
 
         // 检测屏幕尺寸自动调整初始缩放
@@ -534,19 +608,9 @@
             });
             event.target.classList.add('active');
 
-            // 更新设备信息
-            const phoneFrame = document.querySelector('.phone-frame');
-            const deviceInfo = document.getElementById('deviceInfo');
-
-            if (device === 'android') {
-                phoneFrame.style.borderRadius = '20px';
-                document.querySelector('.home-indicator').style.display = 'none';
-                deviceInfo.textContent = 'Android (430 x 932) - 19.5:9';
-            } else {
-                phoneFrame.style.borderRadius = '30px';
-                document.querySelector('.home-indicator').style.display = 'block';
-                deviceInfo.textContent = 'iPhone 14 Pro Max (430 x 932) - 19.5:9';
-            }
+            const config = deviceConfigs[device] || deviceConfigs.iphone;
+            applyDeviceConfig(config);
+            updateScale();
         }
 
         // 监听iframe内的导航
