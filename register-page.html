@@ -102,47 +102,6 @@
             margin-top: 6px;
         }
 
-        .agreement-block {
-            margin-top: 24px;
-            padding: 16px;
-            background: #f8faf8;
-            border: 1px solid #e4efe4;
-            border-radius: 12px;
-        }
-
-        .agreement-item {
-            display: flex;
-            align-items: flex-start;
-            margin-bottom: 14px;
-            color: #555;
-            font-size: 13px;
-            line-height: 1.6;
-        }
-
-        .agreement-item:last-child {
-            margin-bottom: 0;
-        }
-
-        .agreement-checkbox {
-            margin-right: 10px;
-            margin-top: 3px;
-        }
-
-        .agreement-link {
-            color: #4a9b4e;
-            text-decoration: none;
-        }
-
-        .agreement-link:hover {
-            text-decoration: underline;
-        }
-
-        .disclaimer-trigger {
-            color: #2d5f30;
-            font-weight: 500;
-            cursor: pointer;
-        }
-
         .register-btn {
             width: 100%;
             padding: 15px;
@@ -199,79 +158,6 @@
             20%, 80% { opacity: 1; }
         }
 
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.45);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 2000;
-            padding: 20px;
-        }
-
-        .modal-overlay.active {
-            display: flex;
-        }
-
-        .modal-content {
-            width: 100%;
-            max-width: 480px;
-            background: white;
-            border-radius: 14px;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            max-height: 80vh;
-        }
-
-        .modal-header {
-            padding: 16px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: linear-gradient(135deg, #4a9b4e, #6ab56e);
-            color: white;
-            font-size: 16px;
-            font-weight: 600;
-        }
-
-        .close-btn {
-            background: none;
-            border: none;
-            color: inherit;
-            font-size: 22px;
-            cursor: pointer;
-        }
-
-        .modal-body {
-            padding: 20px;
-            overflow-y: auto;
-            font-size: 13px;
-            line-height: 1.8;
-            color: #555;
-        }
-
-        .modal-body p {
-            margin-bottom: 10px;
-        }
-
-        .modal-footer {
-            padding: 12px 20px 18px;
-            background: #f8faf8;
-            text-align: right;
-        }
-
-        .modal-action {
-            background: #4a9b4e;
-            color: white;
-            border: none;
-            padding: 10px 18px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 13px;
-        }
-
         @media (max-width: 480px) {
             .logo-section {
                 padding: 40px 16px 24px;
@@ -316,24 +202,6 @@
             <div class="helper-text">密码需包含字母与数字的组合</div>
         </div>
 
-        <div class="agreement-block">
-            <label class="agreement-item">
-                <input type="checkbox" id="serviceAgreement" class="agreement-checkbox">
-                <span>我已阅读并同意
-                    <a href="#" class="agreement-link">《用户协议》</a>
-                    和
-                    <a href="#" class="agreement-link">《隐私政策》</a>
-                </span>
-            </label>
-            <label class="agreement-item">
-                <input type="checkbox" id="disclaimerAgreement" class="agreement-checkbox">
-                <span>
-                    已阅读并接受
-                    <span class="disclaimer-trigger" onclick="toggleDisclaimer(true)">《芝生药局免责声明》</span>
-                </span>
-            </label>
-        </div>
-
         <button class="register-btn" onclick="register()">立即注册</button>
 
         <div class="footer-links">
@@ -341,45 +209,12 @@
         </div>
     </div>
 
-    <div class="modal-overlay" id="disclaimerModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                免责声明
-                <button class="close-btn" onclick="toggleDisclaimer(false)">×</button>
-            </div>
-            <div class="modal-body" id="disclaimerBody">
-                <p>1. 芝生药局平台提供的医疗健康商品均为正规渠道采购，仅供个人使用，请在专业医师指导下选购和使用。</p>
-                <p>2. 处方药需提供有效处方或问诊信息，可能产生额外的医疗咨询费用，若无法通过审核，平台将全额退款。</p>
-                <p>3. 请务必按照商品说明书或医师指导使用，如出现不良反应请立即停止并就医。</p>
-                <p>4. 跨境购药存在清关及物流风险，若因政策或不可抗力导致延迟，平台将协助处理但不承担额外损失。</p>
-                <p>5. 用户需自行确保所提交的资料真实有效，因信息不实造成的损失由用户承担。</p>
-                <p>6. 对于因不当使用商品产生的任何直接或间接损害，平台不承担法律责任。</p>
-                <p>7. 如有疑问，请及时联系芝生药局客服或咨询专业医师。</p>
-            </div>
-            <div class="modal-footer">
-                <button class="modal-action" onclick="acknowledgeDisclaimer()">已阅读</button>
-            </div>
-        </div>
-    </div>
-
     <div class="toast" id="toast"></div>
 
+    <script src="global-script.js"></script>
     <script>
         const POINTS_STORAGE_KEY = 'zhisheng_points_balance';
-
-        function toggleDisclaimer(show) {
-            const modal = document.getElementById('disclaimerModal');
-            if (show) {
-                modal.classList.add('active');
-            } else {
-                modal.classList.remove('active');
-            }
-        }
-
-        function acknowledgeDisclaimer() {
-            document.getElementById('disclaimerAgreement').checked = true;
-            toggleDisclaimer(false);
-        }
+        const QUESTIONNAIRE_PROMPT_KEY = 'zhisheng_pending_questionnaire_prompt';
 
         function register() {
             const name = document.getElementById('registerName').value.trim();
@@ -387,49 +222,44 @@
             const email = document.getElementById('registerEmail').value.trim();
             const password = document.getElementById('registerPassword').value;
             const confirmPassword = document.getElementById('registerConfirm').value;
-            const serviceAgreement = document.getElementById('serviceAgreement').checked;
-            const disclaimerAgreement = document.getElementById('disclaimerAgreement').checked;
 
-            if (!name) {
-                return showToast('请填写姓名');
-            }
+            const displayName = name || '芝生会员';
+            const profileStore = window.ZhiSheng ? window.ZhiSheng.UserProfile : null;
 
-            if (!phone) {
-                return showToast('请填写手机号');
-            }
-
-            if (!password || password.length < 6) {
-                return showToast('请设置至少6位的登录密码');
+            if (profileStore) {
+                profileStore.updateProfile({
+                    name: displayName,
+                    mobile: phone,
+                    email,
+                    updatedAt: new Date().toISOString()
+                });
+            } else {
+                localStorage.setItem('userName', displayName);
+                localStorage.setItem('userPhone', phone);
+                localStorage.setItem('userEmail', email);
             }
 
             if (password !== confirmPassword) {
-                return showToast('两次输入的密码不一致');
+                // 在原型中不做校验，仅用于提醒
+                console.warn('密码与确认密码不一致：原型环境不阻止跳转');
             }
 
-            const hasLetter = /[a-zA-Z]/.test(password);
-            const hasNumber = /\d/.test(password);
-            if (!hasLetter || !hasNumber) {
-                return showToast('密码需包含字母与数字');
-            }
+            localStorage.setItem('isLoggedIn', 'true');
+            localStorage.setItem(POINTS_STORAGE_KEY, '0');
+            localStorage.setItem(QUESTIONNAIRE_PROMPT_KEY, 'true');
 
-            if (!serviceAgreement) {
-                return showToast('请先同意用户协议与隐私政策');
+            if (phone) {
+                localStorage.setItem('zhisheng_recent_phone', phone);
             }
-
-            if (!disclaimerAgreement) {
-                return showToast('请阅读并接受免责声明');
+            if (email) {
+                localStorage.setItem('zhisheng_recent_email', email);
             }
 
             showToast('注册成功，正在跳转');
 
             setTimeout(() => {
-                localStorage.setItem('isLoggedIn', 'true');
-                localStorage.setItem('userName', name || '芝生会员');
-                localStorage.setItem('userPhone', phone);
-                localStorage.setItem('userEmail', email);
-                localStorage.setItem(POINTS_STORAGE_KEY, '0');
                 window.location.href = 'index.html';
-            }, 1200);
+            }, 800);
         }
 
         function showToast(message) {

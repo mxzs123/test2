@@ -153,65 +153,62 @@
         }
 
         .form-textarea {
-            min-height: 80px;
+            min-height: 90px;
             resize: vertical;
         }
 
-        .symptom-options {
+        .option-group {
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
+            gap: 10px;
         }
 
-        .symptom-tag {
-            padding: 6px 14px;
-            border-radius: 16px;
-            border: 1px solid #d0d0d0;
+        .option-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            border-radius: 999px;
+            background: #f5f9f5;
+            border: 1px solid #dfe5df;
             font-size: 13px;
             color: #555;
             cursor: pointer;
             transition: all 0.2s ease;
-            background: #f7f7f7;
         }
 
-        .symptom-tag.selected {
-            background: #e8f5e9;
-            border-color: #4a9b4e;
-            color: #2d5f30;
-            box-shadow: inset 0 0 0 1px rgba(74,155,78,0.2);
+        .option-chip input {
+            accent-color: #4a9b4e;
         }
 
-        .checkbox-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
+        .detail-field {
+            margin-top: 10px;
         }
 
-        .checkbox-item {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 13px;
-            color: #555;
-        }
-
-        .checkbox-input {
-            width: 16px;
-            height: 16px;
-        }
-
-        .toggle-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 12px 14px;
-            border: 1px solid #e0e0e0;
+        .id-upload-box {
+            background: #f8faf8;
+            border: 1px solid #e0ece0;
             border-radius: 12px;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
 
-        .toggle-row label {
+        .link-btn {
+            align-self: flex-start;
+            padding: 8px 16px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #4a9b4e, #6ab56e);
+            color: white;
+            border: none;
             font-size: 13px;
-            color: #555;
+            cursor: pointer;
+        }
+
+        .form-helper {
+            font-size: 12px;
+            color: #888;
         }
 
         .form-actions {
@@ -241,12 +238,6 @@
             color: #555;
         }
 
-        .btn-ghost {
-            background: #ffffff;
-            color: #4a9b4e;
-            border: 1px solid #cbe6ce;
-        }
-
         .btn:active {
             transform: scale(0.97);
         }
@@ -269,71 +260,123 @@
             <div class="summary-meta" id="summaryMeta">
                 <span>暂无提交记录</span>
             </div>
-            <div class="action-link" onclick="goToFullQuestionnaire()">
-                <span class="material-symbols-outlined" style="font-size: 18px;">description</span>
-                去填写完整版问卷
-            </div>
+            <div class="form-helper">请完整填写以下问卷，以便药师审核及清关。</div>
         </div>
 
         <div class="form-card">
-            <div class="form-section-title">快速编辑</div>
+            <div class="form-section-title">购药需求</div>
+            <div class="form-grid">
+                <div class="form-group span-2">
+                    <label class="form-label" for="questionnaireAddress">您的收货地址 / お届け先住所</label>
+                    <textarea class="form-textarea" id="questionnaireAddress" placeholder="请填写详细的收货地址，包含国家/地区、邮政编码、街道门牌等信息"></textarea>
+                    <div class="form-helper">建议使用中文+日文或英文，方便清关。</div>
+                </div>
+                <div class="form-group span-2">
+                    <label class="form-label" for="questionnaireMedication">您希望选择的药物是？ / 希望する医薬品名は？</label>
+                    <textarea class="form-textarea" id="questionnaireMedication" placeholder="请填写药品正式中文/日文名称，包含剂量与规格"></textarea>
+                    <div class="form-helper">例：タミフル75mg胶囊 / 一盒10粒。</div>
+                </div>
+                <div class="form-group span-2">
+                    <label class="form-label" for="questionnaireQuantity">期望购买的药量 / ご希望の薬の量</label>
+                    <input class="form-input" type="text" id="questionnaireQuantity" placeholder="例如：2盒 / 60片 / 3瓶">
+                    <div class="form-helper">单位可填写枚、粒、盒、片等。</div>
+                </div>
+            </div>
+            <div class="form-section-title" style="margin-top: 24px;">用药背景</div>
+            <div class="form-grid">
+                <div class="form-group span-2">
+                    <label class="form-label">服药历 / 服薬歴</label>
+                    <div class="option-group" data-detail="medicationHistoryDetail">
+                        <label class="option-chip"><input type="radio" name="medicationHistory" value="no" checked> 无 / なし</label>
+                        <label class="option-chip"><input type="radio" name="medicationHistory" value="yes"> 有 / あり</label>
+                    </div>
+                    <textarea class="form-textarea detail-field" id="medicationHistoryDetail" placeholder="如有，请注明服用药品、开始时间与频次：例 2025年3月起使用XXX，每日2次" style="display: none;"></textarea>
+                </div>
+                <div class="form-group span-2">
+                    <label class="form-label">使用上述药品是否出现不良反应？/ 上記医薬品を服用した際に不良反应がありましたか</label>
+                    <div class="option-group" data-detail="adverseReactionDetail">
+                        <label class="option-chip"><input type="radio" name="adverseReaction" value="no" checked> 无 / なし</label>
+                        <label class="option-chip"><input type="radio" name="adverseReaction" value="yes"> 有 / あり</label>
+                    </div>
+                    <textarea class="form-textarea detail-field" id="adverseReactionDetail" placeholder="如有，请描述具体不良反应、持续时间及处理措施" style="display: none;"></textarea>
+                </div>
+                <div class="form-group span-2">
+                    <label class="form-label">周围是否有可提供用药指导的专业人员？/ 周りに服薬指導できる専門家がいますでしょうか</label>
+                    <div class="option-group" data-detail="guidanceDetail">
+                        <label class="option-chip"><input type="radio" name="guidanceSupport" value="no" checked> 没有 / いいえ</label>
+                        <label class="option-chip"><input type="radio" name="guidanceSupport" value="yes"> 有（请具体说明）/ はい</label>
+                    </div>
+                    <textarea class="form-textarea detail-field" id="guidanceDetail" placeholder="如选择“有”，请说明医师/药师姓名、机构或联系方式" style="display: none;"></textarea>
+                </div>
+                <div class="form-group span-2">
+                    <label class="form-label">当地是否有其他正规购药渠道？/ 他に該当医薬品を購入できる正規ルートがありますでしょうか</label>
+                    <div class="option-group" data-detail="alternativeChannelDetail">
+                        <label class="option-chip"><input type="radio" name="alternativeChannel" value="no" checked> 没有 / いいえ</label>
+                        <label class="option-chip"><input type="radio" name="alternativeChannel" value="yes"> 有（请具体说明）/ はい</label>
+                    </div>
+                    <textarea class="form-textarea detail-field" id="alternativeChannelDetail" placeholder="如选择“有”，请描述可购买的渠道或机构" style="display: none;"></textarea>
+                </div>
+                <div class="form-group span-2">
+                    <label class="form-label">过敏史 / アレルギー</label>
+                    <div class="option-group" data-detail="allergyDetail">
+                        <label class="option-chip"><input type="radio" name="allergyStatus" value="no" checked> 无 / なし</label>
+                        <label class="option-chip"><input type="radio" name="allergyStatus" value="yes"> 有 / あり</label>
+                    </div>
+                    <textarea class="form-textarea detail-field" id="allergyDetail" placeholder="如有，请列出过敏药物或成分" style="display: none;"></textarea>
+                </div>
+                <div class="form-group span-2">
+                    <label class="form-label">是否怀孕或正在哺乳（男性请选择否）/ 妊娠中または授乳中ですか？</label>
+                    <div class="option-group">
+                        <label class="option-chip"><input type="radio" name="maternityStatus" value="pregnancy"> 怀孕期 / 妊娠中</label>
+                        <label class="option-chip"><input type="radio" name="maternityStatus" value="lactation"> 哺乳期 / 授乳中</label>
+                        <label class="option-chip"><input type="radio" name="maternityStatus" value="none" checked> 否 / いいえ</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section-title" style="margin-top: 24px;">身体基础信息</div>
             <div class="form-grid">
                 <div class="form-group">
-                    <label class="form-label" for="questionnaireAge">年龄</label>
-                    <input class="form-input" type="number" id="questionnaireAge" placeholder="请输入年龄">
+                    <label class="form-label" for="questionnaireHeight">身高(cm) / 身長</label>
+                    <input class="form-input" type="number" id="questionnaireHeight" placeholder="请输入100-200之间的数字" min="100" max="200">
                 </div>
                 <div class="form-group">
-                    <label class="form-label" for="questionnaireHeight">身高(cm)</label>
-                    <input class="form-input" type="number" id="questionnaireHeight" placeholder="身高">
+                    <label class="form-label" for="questionnaireWeight">体重(kg) / 体重</label>
+                    <input class="form-input" type="number" id="questionnaireWeight" placeholder="请输入30-150之间的数字" min="30" max="150">
                 </div>
-                <div class="form-group">
-                    <label class="form-label" for="questionnaireWeight">体重(kg)</label>
-                    <input class="form-input" type="number" id="questionnaireWeight" placeholder="体重">
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="questionnaireDuration">症状持续时间</label>
-                    <select class="form-select" id="questionnaireDuration">
-                        <option value="days1">1-3天</option>
-                        <option value="days2">4-7天</option>
-                        <option value="days3">一周以上</option>
-                    </select>
-                </div>
+            </div>
+
+            <div class="form-section-title" style="margin-top: 24px;">生活习惯 & 证件</div>
+            <div class="form-grid">
                 <div class="form-group span-2">
-                    <label class="form-label">主要症状</label>
-                    <div class="symptom-options" id="symptomOptions"></div>
-                </div>
-                <div class="form-group span-2">
-                    <label class="form-label" for="questionnaireSymptomDetail">症状描述</label>
-                    <textarea class="form-textarea" id="questionnaireSymptomDetail" placeholder="请补充说明症状细节"></textarea>
-                </div>
-                <div class="form-group span-2">
-                    <label class="form-label">既往病史</label>
-                    <div class="checkbox-list" id="historyList"></div>
-                </div>
-                <div class="form-group span-2">
-                    <label class="form-label" for="questionnaireMedications">正在服用的药物</label>
-                    <textarea class="form-textarea" id="questionnaireMedications" placeholder="选填，多个药物请用逗号分隔"></textarea>
-                </div>
-                <div class="form-group span-2">
-                    <label class="form-label">药物过敏史</label>
-                    <div class="toggle-row">
-                        <label>是否有药物过敏</label>
-                        <input type="checkbox" id="questionnaireHasAllergy" class="checkbox-input">
+                    <label class="form-label">是否有喝酒习惯？/ 普段お酒を飲む習慣はありますか？</label>
+                    <div class="option-group">
+                        <label class="option-chip"><input type="radio" name="alcoholHabit" value="none" checked> 没有 / 飲まない</label>
+                        <label class="option-chip"><input type="radio" name="alcoholHabit" value="occasionally"> 偶尔喝酒 / たまに飲む</label>
+                        <label class="option-chip"><input type="radio" name="alcoholHabit" value="frequent"> 经常喝酒 / よく飲む</label>
                     </div>
-                    <input class="form-input" type="text" id="questionnaireAllergyDetail" placeholder="请填写过敏药物" style="margin-top: 10px; display: none;">
                 </div>
                 <div class="form-group span-2">
-                    <div class="toggle-row">
-                        <label>是否需要视频问诊</label>
-                        <input type="checkbox" id="questionnaireConsultation" class="checkbox-input">
+                    <label class="form-label">是否有吸烟习惯？/ 普段タバコを吸う習慣はありますか？</label>
+                    <div class="option-group">
+                        <label class="option-chip"><input type="radio" name="smokingHabit" value="none" checked> 没有 / 吸わない</label>
+                        <label class="option-chip"><input type="radio" name="smokingHabit" value="occasionally"> 偶尔抽烟 / たまに吸う</label>
+                        <label class="option-chip"><input type="radio" name="smokingHabit" value="frequent"> 经常抽烟 / よく吸う</label>
+                    </div>
+                </div>
+                <div class="form-group span-2">
+                    <label class="form-label">上传证件信息 / ご本人確認書類のアップロード</label>
+                    <div class="id-upload-box">
+                        <div class="form-helper">中国用户请上传身份证正反面并添加水印“仅用于快递报关”。其他国家可使用护照、身份证或驾驶证。</div>
+                        <textarea class="form-textarea" id="idDocumentNote" placeholder="可填写已上传的证件说明或其他备注"></textarea>
+                        <button class="link-btn" type="button" onclick="openIdUpload()">前往上传证件</button>
                     </div>
                 </div>
             </div>
 
             <div class="form-actions">
                 <button class="btn btn-secondary" onclick="handleReset()">还原</button>
-                <button class="btn btn-ghost" onclick="goToFullQuestionnaire()">完整版问卷</button>
-                <button class="btn btn-primary" onclick="handleSave()">保存修改</button>
+                <button class="btn btn-primary" onclick="handleSave()">保存问卷</button>
             </div>
         </div>
     </div>
@@ -344,47 +387,13 @@
         const utils = window.ZhiSheng ? window.ZhiSheng.utils : null;
         const toast = window.ZhiSheng ? window.ZhiSheng.Toast : null;
 
-        const symptomOptions = ['发热', '咳嗽', '头痛', '咽痛', '鼻塞', '流涕', '乏力', '其他'];
-        const historyOptions = ['高血压', '糖尿病', '心脏病', '肝肾疾病', '无'];
-
-        function createSymptomChips(selected = []) {
-            const container = document.getElementById('symptomOptions');
-            container.innerHTML = '';
-            symptomOptions.forEach(symptom => {
-                const chip = document.createElement('div');
-                chip.className = 'symptom-tag';
-                chip.textContent = symptom;
-                if (selected.includes(symptom)) {
-                    chip.classList.add('selected');
-                }
-                chip.addEventListener('click', () => {
-                    chip.classList.toggle('selected');
-                });
-                container.appendChild(chip);
-            });
-        }
-
-        function createHistoryList(selected = []) {
-            const container = document.getElementById('historyList');
-            container.innerHTML = '';
-            historyOptions.forEach((history, index) => {
-                const wrapper = document.createElement('label');
-                wrapper.className = 'checkbox-item';
-
-                const input = document.createElement('input');
-                input.type = 'checkbox';
-                input.className = 'checkbox-input';
-                input.id = `history_${index}`;
-                input.checked = selected.includes(history);
-
-                const text = document.createElement('span');
-                text.textContent = history;
-
-                wrapper.appendChild(input);
-                wrapper.appendChild(text);
-                container.appendChild(wrapper);
-            });
-        }
+        const detailToggleMap = {
+            medicationHistory: 'medicationHistoryDetail',
+            adverseReaction: 'adverseReactionDetail',
+            guidanceSupport: 'guidanceDetail',
+            alternativeChannel: 'alternativeChannelDetail',
+            allergyStatus: 'allergyDetail'
+        };
 
         function showToast(message) {
             if (toast && typeof toast.show === 'function') {
@@ -394,60 +403,106 @@
             }
         }
 
-        function populateForm(data) {
-            document.getElementById('questionnaireAge').value = data.age || '';
+        function getRadioValue(name) {
+            const selected = document.querySelector(`input[name="${name}"]:checked`);
+            return selected ? selected.value : null;
+        }
+
+        function setRadioValue(name, value) {
+            const radio = document.querySelector(`input[name="${name}"][value="${value}"]`);
+            if (radio) {
+                radio.checked = true;
+            }
+            updateDetailVisibility(name);
+        }
+
+        function updateDetailVisibility(name) {
+            const detailId = detailToggleMap[name];
+            if (!detailId) {
+                return;
+            }
+            const detailEl = document.getElementById(detailId);
+            if (!detailEl) {
+                return;
+            }
+            const shouldShow = getRadioValue(name) === 'yes';
+            detailEl.style.display = shouldShow ? 'block' : 'none';
+        }
+
+        function setupDetailToggles() {
+            Object.keys(detailToggleMap).forEach(name => {
+                const radios = document.querySelectorAll(`input[name="${name}"]`);
+                radios.forEach(radio => {
+                    radio.addEventListener('change', () => updateDetailVisibility(name));
+                });
+                updateDetailVisibility(name);
+            });
+        }
+
+        function populateForm(data = {}) {
+            document.getElementById('questionnaireAddress').value = data.shippingAddress || '';
+            document.getElementById('questionnaireMedication').value = data.desiredMedication || '';
+            document.getElementById('questionnaireQuantity').value = data.desiredQuantity || '';
+
+            setRadioValue('medicationHistory', data.hasMedicationHistory ? 'yes' : 'no');
+            document.getElementById('medicationHistoryDetail').value = data.medicationHistoryDetail || '';
+
+            setRadioValue('adverseReaction', data.hasAdverseReaction ? 'yes' : 'no');
+            document.getElementById('adverseReactionDetail').value = data.adverseReactionDetail || '';
+
+            setRadioValue('guidanceSupport', data.hasGuidanceSupport ? 'yes' : 'no');
+            document.getElementById('guidanceDetail').value = data.guidanceDetail || '';
+
+            setRadioValue('alternativeChannel', data.hasAlternativeChannel ? 'yes' : 'no');
+            document.getElementById('alternativeChannelDetail').value = data.alternativeChannelDetail || '';
+
+            setRadioValue('allergyStatus', data.hasAllergy ? 'yes' : 'no');
+            document.getElementById('allergyDetail').value = data.allergyDetail || '';
+
+            setRadioValue('maternityStatus', data.maternityStatus || 'none');
             document.getElementById('questionnaireHeight').value = data.height || '';
             document.getElementById('questionnaireWeight').value = data.weight || '';
-            const durationSelect = document.getElementById('questionnaireDuration');
-            const validDurations = ['days1', 'days2', 'days3'];
-            durationSelect.value = validDurations.includes(data.duration) ? data.duration : 'days1';
-            document.getElementById('questionnaireSymptomDetail').value = data.symptomDetail || '';
-            document.getElementById('questionnaireMedications').value = data.medications || '';
-            document.getElementById('questionnaireHasAllergy').checked = Boolean(data.hasAllergy);
-            document.getElementById('questionnaireAllergyDetail').value = data.allergyDetail || '';
-            document.getElementById('questionnaireConsultation').checked = Boolean(data.needConsultation);
-            toggleAllergyInput(data.hasAllergy);
 
-            createSymptomChips(Array.isArray(data.symptoms) ? data.symptoms : []);
-            createHistoryList(Array.isArray(data.medicalHistory) ? data.medicalHistory : []);
+            setRadioValue('alcoholHabit', data.alcoholHabit || 'none');
+            setRadioValue('smokingHabit', data.smokingHabit || 'none');
+
+            document.getElementById('idDocumentNote').value = data.idDocumentNote || '';
+
+            Object.keys(detailToggleMap).forEach(updateDetailVisibility);
             updateSummary(data);
         }
 
-        function toggleAllergyInput(show) {
-            const detailInput = document.getElementById('questionnaireAllergyDetail');
-            detailInput.style.display = show ? 'block' : 'none';
-        }
-
-        document.getElementById('questionnaireHasAllergy').addEventListener('change', (event) => {
-            toggleAllergyInput(event.target.checked);
-        });
-
-        function collectSelectedSymptoms() {
-            return Array.from(document.querySelectorAll('#symptomOptions .symptom-tag.selected')).map(item => item.textContent.trim());
-        }
-
-        function collectSelectedHistory() {
-            return Array.from(document.querySelectorAll('#historyList .checkbox-input:checked')).map(input => input.nextSibling.textContent.trim());
-        }
-
-        function updateSummary(data) {
+        function updateSummary(data = {}) {
             const statusEl = document.getElementById('summaryStatus');
             const metaEl = document.getElementById('summaryMeta');
 
-            const hasCompleted = Boolean(data && data.symptoms && data.symptoms.length);
-            const statusText = hasCompleted ? '问卷信息已完善' : '问卷信息未完善';
-            statusEl.innerHTML = `<span class="material-symbols-outlined" style="font-size: 18px;">assignment</span>${statusText}`;
+            const hasCompleted = Boolean(
+                data &&
+                data.shippingAddress &&
+                data.desiredMedication &&
+                data.desiredQuantity &&
+                data.height &&
+                data.weight
+            );
+
+            statusEl.innerHTML = `<span class="material-symbols-outlined" style="font-size: 18px;">assignment</span>${hasCompleted ? '问卷信息已完善' : '问卷信息未完善'}`;
             statusEl.classList.toggle('completed', hasCompleted);
 
             const metaParts = [];
-            if (data.age) {
-                metaParts.push(`年龄 ${data.age}`);
+            if (data.desiredMedication) {
+                metaParts.push(`药品 ${data.desiredMedication}`);
+            }
+            if (data.desiredQuantity) {
+                metaParts.push(`剂量 ${data.desiredQuantity}`);
             }
             if (data.height && data.weight) {
                 metaParts.push(`身高 ${data.height}cm / 体重 ${data.weight}kg`);
             }
-            if (Array.isArray(data.symptoms) && data.symptoms.length) {
-                metaParts.push(`症状 ${data.symptoms.join('、')}`);
+            if (data.shippingAddress) {
+                const preview = data.shippingAddress.length > 18
+                    ? `${data.shippingAddress.slice(0, 18)}...`
+                    : data.shippingAddress;
+                metaParts.push(`配送地 ${preview}`);
             }
             if (data.timestamp) {
                 const timeText = utils && typeof utils.formatDate === 'function'
@@ -460,19 +515,53 @@
         }
 
         function getFormData() {
-            const hasAllergy = document.getElementById('questionnaireHasAllergy').checked;
+            const address = document.getElementById('questionnaireAddress').value.trim();
+            const medication = document.getElementById('questionnaireMedication').value.trim();
+            const quantity = document.getElementById('questionnaireQuantity').value.trim();
+
+            const hasMedicationHistory = getRadioValue('medicationHistory') === 'yes';
+            const medicationHistoryDetail = hasMedicationHistory ? document.getElementById('medicationHistoryDetail').value.trim() : '';
+
+            const hasAdverseReaction = getRadioValue('adverseReaction') === 'yes';
+            const adverseReactionDetail = hasAdverseReaction ? document.getElementById('adverseReactionDetail').value.trim() : '';
+
+            const hasGuidanceSupport = getRadioValue('guidanceSupport') === 'yes';
+            const guidanceDetail = hasGuidanceSupport ? document.getElementById('guidanceDetail').value.trim() : '';
+
+            const hasAlternativeChannel = getRadioValue('alternativeChannel') === 'yes';
+            const alternativeChannelDetail = hasAlternativeChannel ? document.getElementById('alternativeChannelDetail').value.trim() : '';
+
+            const hasAllergy = getRadioValue('allergyStatus') === 'yes';
+            const allergyDetail = hasAllergy ? document.getElementById('allergyDetail').value.trim() : '';
+
+            const maternityStatus = getRadioValue('maternityStatus') || 'none';
+            const height = document.getElementById('questionnaireHeight').value.trim();
+            const weight = document.getElementById('questionnaireWeight').value.trim();
+
+            const alcoholHabit = getRadioValue('alcoholHabit') || 'none';
+            const smokingHabit = getRadioValue('smokingHabit') || 'none';
+            const idDocumentNote = document.getElementById('idDocumentNote').value.trim();
+
             return {
-                age: document.getElementById('questionnaireAge').value,
-                height: document.getElementById('questionnaireHeight').value,
-                weight: document.getElementById('questionnaireWeight').value,
-                duration: document.getElementById('questionnaireDuration').value,
-                symptoms: collectSelectedSymptoms(),
-                symptomDetail: document.getElementById('questionnaireSymptomDetail').value.trim(),
-                medicalHistory: collectSelectedHistory(),
-                medications: document.getElementById('questionnaireMedications').value.trim(),
+                shippingAddress: address,
+                desiredMedication: medication,
+                desiredQuantity: quantity,
+                hasMedicationHistory,
+                medicationHistoryDetail,
+                hasAdverseReaction,
+                adverseReactionDetail,
+                hasGuidanceSupport,
+                guidanceDetail,
+                hasAlternativeChannel,
+                alternativeChannelDetail,
                 hasAllergy,
-                allergyDetail: hasAllergy ? document.getElementById('questionnaireAllergyDetail').value.trim() : '',
-                needConsultation: document.getElementById('questionnaireConsultation').checked
+                allergyDetail,
+                maternityStatus,
+                height,
+                weight,
+                alcoholHabit,
+                smokingHabit,
+                idDocumentNote
             };
         }
 
@@ -483,18 +572,63 @@
             }
 
             const data = getFormData();
-            if (!data.age) {
-                showToast('请填写年龄');
-                return;
-            }
-            if (!data.symptoms.length) {
-                showToast('请选择至少一个症状');
+
+            if (!data.shippingAddress) {
+                showToast('请填写收货地址');
                 return;
             }
 
-            const saved = questionnaireStore.saveQuestionnaire(data);
+            if (!data.desiredMedication) {
+                showToast('请填写希望购买的药品名称');
+                return;
+            }
+
+            if (!data.desiredQuantity) {
+                showToast('请填写期望购买的药量');
+                return;
+            }
+
+            const heightValue = Number(data.height);
+            if (!data.height || Number.isNaN(heightValue) || heightValue < 100 || heightValue > 200) {
+                showToast('请填写100-200之间的身高');
+                return;
+            }
+
+            const weightValue = Number(data.weight);
+            if (!data.weight || Number.isNaN(weightValue) || weightValue < 30 || weightValue > 150) {
+                showToast('请填写30-150之间的体重');
+                return;
+            }
+
+            if (data.hasMedicationHistory && !data.medicationHistoryDetail) {
+                showToast('请补充服药历详情');
+                return;
+            }
+
+            if (data.hasAdverseReaction && !data.adverseReactionDetail) {
+                showToast('请补充不良反应描述');
+                return;
+            }
+
+            if (data.hasGuidanceSupport && !data.guidanceDetail) {
+                showToast('请说明可提供指导的专业人员');
+                return;
+            }
+
+            if (data.hasAlternativeChannel && !data.alternativeChannelDetail) {
+                showToast('请说明其他正规购药渠道');
+                return;
+            }
+
+            if (data.hasAllergy && !data.allergyDetail) {
+                showToast('请填写具体过敏药物');
+                return;
+            }
+
+            const payload = { ...data, timestamp: new Date().toISOString() };
+            const saved = questionnaireStore.saveQuestionnaire(payload);
             populateForm(saved);
-            showToast('问卷信息已更新');
+            showToast('问卷信息已保存');
         }
 
         function handleReset() {
@@ -506,11 +640,12 @@
             showToast('已还原为当前保存的问卷');
         }
 
-        function goToFullQuestionnaire() {
-            window.location.href = 'questionnaire-page.html';
+        function openIdUpload() {
+            window.location.href = 'upload-id-page.html';
         }
 
         document.addEventListener('DOMContentLoaded', () => {
+            setupDetailToggles();
             const data = questionnaireStore ? questionnaireStore.getQuestionnaire() : {};
             populateForm(data);
         });

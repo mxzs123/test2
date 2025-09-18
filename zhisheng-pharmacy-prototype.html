@@ -564,6 +564,63 @@
             color: white;
         }
 
+        .questionnaire-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2200;
+            padding: 20px;
+        }
+
+        .questionnaire-overlay.active {
+            display: flex;
+        }
+
+        .questionnaire-modal {
+            width: 100%;
+            max-width: 340px;
+            background: white;
+            border-radius: 20px;
+            padding: 26px 24px 22px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .questionnaire-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2d5f30;
+            margin-bottom: 10px;
+        }
+
+        .questionnaire-message {
+            font-size: 13px;
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 18px;
+        }
+
+        .questionnaire-highlight {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            border-radius: 999px;
+            background: #f1faf1;
+            color: #2d5f30;
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 18px;
+        }
+
+        .questionnaire-actions {
+            display: flex;
+            gap: 12px;
+        }
+
         /* 底部信息 */
         .footer-info {
             padding: 20px;
@@ -1159,6 +1216,21 @@
         </div>
     </div>
 
+    <div class="questionnaire-overlay" id="questionnairePrompt">
+        <div class="questionnaire-modal">
+            <div class="questionnaire-title">完善健康信息可享奖励</div>
+            <div class="questionnaire-message">感谢注册芝生药局，补充关键健康资料即可提前通过审核，结算时自动抵扣等值500日元优惠券。</div>
+            <div class="questionnaire-highlight">
+                <span class="material-symbols-outlined" style="font-size: 18px;">redeem</span>
+                先完善问卷 · 下单更省心
+            </div>
+            <div class="questionnaire-actions">
+                <button class="modal-btn confirm" type="button" onclick="goToQuestionnaireFromPrompt()">完善问卷</button>
+                <button class="modal-btn cancel" type="button" onclick="dismissQuestionnairePrompt()">继续</button>
+            </div>
+        </div>
+    </div>
+
     <style>
         /* 补充样式 */
         .category-nav-item {
@@ -1511,6 +1583,7 @@
         let pendingPrescription = null;
         let activeQrType = null;
 
+        const QUESTIONNAIRE_PROMPT_KEY = 'zhisheng_pending_questionnaire_prompt';
         const userProfileStore = window.ZhiSheng ? window.ZhiSheng.UserProfile : null;
         const questionnaireStore = window.ZhiSheng ? window.ZhiSheng.Questionnaire : null;
         const utils = window.ZhiSheng ? window.ZhiSheng.utils : null;
@@ -1564,7 +1637,14 @@
                 return;
             }
             const data = questionnaireStore.getQuestionnaire();
-            const hasCompleted = Boolean(data && data.timestamp && data.symptoms && data.symptoms.length);
+            const hasCompleted = Boolean(
+                data &&
+                data.shippingAddress &&
+                data.desiredMedication &&
+                data.desiredQuantity &&
+                data.height &&
+                data.weight
+            );
 
             if (hasCompleted) {
                 let timeLabel = '';
@@ -1575,10 +1655,42 @@
                         timeLabel = new Date(data.timestamp).toLocaleString('zh-CN', { hour12: false });
                     }
                 }
-                statusEl.textContent = timeLabel ? `已完善，最近更新：${timeLabel}` : '已完善，信息待审核';
+                statusEl.textContent = timeLabel ? `问卷已完善，最近更新：${timeLabel}` : '问卷已完善，信息待审核';
             } else {
-                statusEl.textContent = '未完善，请及时补充';
+                statusEl.textContent = '问卷未完善，建议尽快补充';
             }
+        }
+
+        function showQuestionnairePrompt() {
+            const overlay = document.getElementById('questionnairePrompt');
+            if (overlay) {
+                overlay.classList.add('active');
+            }
+        }
+
+        function dismissQuestionnairePrompt() {
+            const overlay = document.getElementById('questionnairePrompt');
+            if (overlay) {
+                overlay.classList.remove('active');
+            }
+            localStorage.removeItem(QUESTIONNAIRE_PROMPT_KEY);
+        }
+        function goToQuestionnaireFromPrompt() {
+            localStorage.removeItem(QUESTIONNAIRE_PROMPT_KEY);
+            if (window.ZhiSheng && window.ZhiSheng.Toast) {
+                window.ZhiSheng.Toast.show('即将前往我的问卷');
+            } else {
+                showToast('即将前往我的问卷');
+            }
+            window.location.href = 'my-questionnaire-page.html';
+        }
+
+        function maybeShowQuestionnairePrompt() {
+            const shouldShow = localStorage.getItem(QUESTIONNAIRE_PROMPT_KEY) === 'true';
+            if (!shouldShow) {
+                return;
+            }
+            showQuestionnairePrompt();
         }
 
         function toggleServiceQr(type) {
@@ -1985,6 +2097,7 @@
             updateCartBadge();
             renderUserProfile();
             renderQuestionnaireStatus();
+            maybeShowQuestionnairePrompt();
         });
     </script>
 </body>
